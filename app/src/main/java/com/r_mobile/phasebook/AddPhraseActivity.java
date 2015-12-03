@@ -12,8 +12,10 @@ import android.widget.Spinner;
 import com.r_mobile.Category;
 import com.r_mobile.CategoryDao;
 import com.r_mobile.DaoSession;
+import com.r_mobile.Phrase;
 import com.r_mobile.PhraseBookApp;
 import com.r_mobile.PhraseDao;
+import com.r_mobile.Translate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,26 +49,30 @@ public class AddPhraseActivity extends AppCompatActivity implements View.OnClick
 
         daoSession = ((PhraseBookApp) getApplicationContext()).daoSession;
         categoryDao = daoSession.getCategoryDao();
-        categoryList = categoryDao.loadAll();
-        LabelList = new ArrayList<String>();
 
-        //Добавляем названия категорий в массив, чтобы не париться с адаптером
-        for (int i = 0; i<categoryList.size(); i++) {
-            LabelList.add(categoryList.get(i).getLabel());
-        }
+        categoryList = categoryDao.loadAll();
 
         spinnerCategories = (Spinner) findViewById(R.id.spinnerCategories);
 
-        ArrayAdapter<String> data = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,LabelList);
-        data.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        spinnerCategories.setAdapter(data);
+        SpinnerAddAdapter spinnerAddAdapter = new SpinnerAddAdapter(this, android.R.layout.simple_list_item_1, categoryList);
+        spinnerCategories.setAdapter(spinnerAddAdapter);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAddPhrase:
-
+                long categoryID = (long) spinnerCategories.getSelectedView().getTag();
+                Phrase phrase = new Phrase();
+                phrase.setCategoryId(categoryID);
+                phrase.setPhrase(etPhrase.getText().toString());
+                daoSession.getPhraseDao().insert(phrase);
+                Translate translate = new Translate();
+                translate.setPhraseId(phrase.getId());
+                translate.setLanguage("English");
+                translate.setContent(etTranslate.getText().toString());
+                translate.setTranscription(etTranscription.getText().toString());
+                daoSession.getTranslateDao().insert(translate);
                 break;
         }
     }
