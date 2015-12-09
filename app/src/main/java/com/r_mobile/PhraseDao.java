@@ -54,8 +54,8 @@ public class PhraseDao extends AbstractDao<Phrase, Long> {
         db.execSQL("CREATE TABLE " + constraint + "'Phrases' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'PHRASE' TEXT," + // 1: phrase
-                "'FAVORITE' INTEGER DEFAULT 0," + // 2: favorite
-                "'OWN' INTEGER DEFAULT 1," + // 3: own
+                "'FAVORITE' INTEGER DEFAULT(0)," + // 2: favorite
+                "'OWN' INTEGER DEFAULT(1)," + // 3: own
                 "'CATEGORY_ID' INTEGER);"); // 4: categoryId
     }
 

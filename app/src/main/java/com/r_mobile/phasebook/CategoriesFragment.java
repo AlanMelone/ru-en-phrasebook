@@ -24,15 +24,15 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Admin on 28.10.2015.
+ * Created by r-mobile on 28.10.2015.
  */
 
 public class CategoriesFragment extends Fragment {
     private DaoSession daoSession;
     private CategoryDao categoryDao;
 
-    CategoryAdapter cAdapter;
-    List<Category> categoryList;
+    CategoryAdapter cAdapter; //Адаптер категорий
+    List<Category> categoryList; //Лист с категориями
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,18 +40,22 @@ public class CategoriesFragment extends Fragment {
 
         daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
         categoryDao = daoSession.getCategoryDao();
-        categoryList = categoryDao.loadAll();
+        categoryList = categoryDao.loadAll(); //Заполняем лист категориями
 
-        cAdapter = new CategoryAdapter(getContext(), categoryList);
+        cAdapter = new CategoryAdapter(getContext(), categoryList); //Определяем адаптер
+
         ListView lvCategories = (ListView)rootView.findViewById(R.id.lvCategories);
-        lvCategories.setAdapter(cAdapter);
+
+        lvCategories.setAdapter(cAdapter); //Присваиваем адаптер листвюшке
+
+        //Определяем нажатие на элемент листвью
         lvCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), PhraseActivity.class);
-                intent.putExtra("activityName", cAdapter.getCategory(position).getLabel());
-                intent.putExtra("categoryID", cAdapter.getCategory(position).getId());
-                startActivity(intent);
+                intent.putExtra("activityName", cAdapter.getCategory(position).getLabel()); //Передаем название нашей категории
+                intent.putExtra("categoryID", cAdapter.getCategory(position).getId()); //Передаем ID категории
+                startActivity(intent); //Переходим на следущее активити
                 Log.d("phrasebook", cAdapter.getCategory(position).getLabel());
             }
         });

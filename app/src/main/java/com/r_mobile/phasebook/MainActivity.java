@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        CharSequence Titles[] = {"Добавленные", "Категории", "Избранное"};
+        CharSequence Titles[] = {"Свои", "Категории", "Избранное"};
         int NumbOfTabs = 3;
 
         //Создаем адаптр

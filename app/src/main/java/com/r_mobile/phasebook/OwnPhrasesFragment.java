@@ -16,12 +16,34 @@ import com.r_mobile.PhraseDao;
 import java.util.List;
 
 /**
- * Created by Admin on 25.11.2015.
+ * Created by r-mobile on 25.11.2015.
+ * Фрагмент для отображения фраз,
+ * добавленных пользователем
  */
 public class OwnPhrasesFragment extends Fragment {
+    private DaoSession daoSession;
+    private PhraseDao phraseDao;
+
+    List<Phrase> phraseList;
+    RecyclerView recyclerView;
+    RecyclerView.Adapter adapter;
+    RecyclerView.LayoutManager layoutManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_ownphrases, container, false);
+
+        daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
+        phraseDao = daoSession.getPhraseDao();
+
+        phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Own.eq(1)).list();
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_phrases_own);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new PhraseAdapter(phraseList);
+        recyclerView.setAdapter(adapter);
+
         return rootView;
     }
 }

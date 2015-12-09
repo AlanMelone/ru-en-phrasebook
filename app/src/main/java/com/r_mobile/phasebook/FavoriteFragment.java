@@ -16,7 +16,7 @@ import com.r_mobile.PhraseDao;
 import java.util.List;
 
 /**
- * Created by Admin on 28.10.2015.
+ * Created by r-mobile on 28.10.2015.
  */
 public class FavoriteFragment extends Fragment {
     private DaoSession daoSession;

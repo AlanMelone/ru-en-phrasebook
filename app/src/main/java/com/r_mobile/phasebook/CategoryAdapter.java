@@ -12,7 +12,8 @@ import com.r_mobile.Category;
 import java.util.List;
 
 /**
- * Created by nemol on 12.11.2015.
+ * Created by r-mobile on 12.11.2015.
+ * Класс описывающий адаптер для категорий
  */
 public class CategoryAdapter extends BaseAdapter {
     Context cntx;
