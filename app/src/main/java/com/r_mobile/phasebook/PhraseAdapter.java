@@ -5,9 +5,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.r_mobile.DaoSession;
 import com.r_mobile.Phrase;
+import com.r_mobile.PhraseBookApp;
+import com.r_mobile.PhraseDao;
 
 import java.util.List;
 
@@ -25,14 +29,15 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         TextView tvPhrase;
         TextView tvTranscription;
         TextView tvTranslate;
-        //ImageView ivFavorite;
+        ImageView ivFavorite;
 
         public DataObjectHolder(View itemView) {
             super(itemView);
             tvPhrase = (TextView) itemView.findViewById(R.id.tvPhrase);
             tvTranscription = (TextView) itemView.findViewById(R.id.tvTranscription);
             tvTranslate = (TextView) itemView.findViewById(R.id.tvTranslate);
-            //ivFavorite = (ImageView) itemView.findViewById(R.id.ivFavorite);
+            ivFavorite = (ImageView) itemView.findViewById(R.id.ivFavorite);
+            ivFavorite.setOnClickListener(this);
             Log.i("phrasebook", "Adding Listener");
             itemView.setOnClickListener(this);
         }
@@ -66,6 +71,11 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         holder.tvPhrase.setText(mDataset.get(position).getPhrase());
         holder.tvTranscription.setText(mDataset.get(position).getTranslateList().get(0).getTranscription());
         holder.tvTranslate.setText(mDataset.get(position).getTranslateList().get(0).getContent());
+        if (mDataset.get(position).getFavorite().equals(1)) {
+            holder.ivFavorite.setImageResource(android.R.drawable.star_on);
+        } else {
+            holder.ivFavorite.setImageResource(android.R.drawable.star_off);
+        }
     }
 
     public void addItem(Phrase dataObj, int index) {

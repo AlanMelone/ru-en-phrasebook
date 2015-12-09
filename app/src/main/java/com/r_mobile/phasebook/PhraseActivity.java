@@ -50,7 +50,6 @@ public class PhraseActivity extends AppCompatActivity {
 
         daoSession = ((PhraseBookApp) getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
-        //translateDao = daoSession.getTranslateDao();
 
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(intent.getLongExtra("categoryID", 2))).list();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_phrases);
@@ -60,7 +59,6 @@ public class PhraseActivity extends AppCompatActivity {
         adapter = new PhraseAdapter(phraseList);
         recyclerView.setAdapter(adapter);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -68,6 +66,20 @@ public class PhraseActivity extends AppCompatActivity {
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
+                switch (v.getId()) {
+                    case R.id.ivFavorite:
+                        //Немного оптимизировать phraseList.get(position) в отдельную переменную
+                        if (phraseList.get(position).getFavorite().equals(0)) {
+                            v.setBackgroundResource(android.R.drawable.star_on);
+                            phraseList.get(position).setFavorite(1);
+                            phraseDao.update(phraseList.get(position));
+                        } else {
+                            v.setBackgroundResource(android.R.drawable.star_off);
+                            phraseList.get(position).setFavorite(0);
+                            phraseDao.update(phraseList.get(position));
+                        }
+                        break;
+                }
                 Log.i("phrasebook", " Clicked on Item " + position);
             }
         });
