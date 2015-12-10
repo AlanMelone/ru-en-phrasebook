@@ -2,6 +2,7 @@ package com.r_mobile.phasebook;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,8 +25,9 @@ public class FavoriteFragment extends Fragment {
 
     List<Phrase> phraseList;
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
+    PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
+    View.OnClickListener onItemClickListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,8 +42,27 @@ public class FavoriteFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new PhraseAdapter(phraseList);
+        if (onItemClickListener != null) {
+            adapter.setOnItemClickListener(onItemClickListener);
+        }
         recyclerView.setAdapter(adapter);
 
         return rootView;
+    }
+
+    public void setOnItemClickListener(View.OnClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+        if (adapter != null) {
+            adapter.setOnItemClickListener(onItemClickListener);
+        }
+    }
+
+    public void refresh() {
+        phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).list();
+        adapter = new PhraseAdapter(phraseList);
+        if (onItemClickListener != null) {
+            adapter.setOnItemClickListener(onItemClickListener);
+        }
+        recyclerView.setAdapter(adapter);
     }
 }

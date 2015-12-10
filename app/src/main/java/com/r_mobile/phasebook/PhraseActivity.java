@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.r_mobile.DaoSession;
 import com.r_mobile.Phrase;
@@ -21,6 +22,8 @@ import java.util.List;
 public class PhraseActivity extends AppCompatActivity {
     private DaoSession daoSession;
     private PhraseDao phraseDao;
+
+    private FavoriteFragment favoriteFragment;
 
     List<Phrase> phraseList;
     RecyclerView recyclerView;
@@ -59,28 +62,45 @@ public class PhraseActivity extends AppCompatActivity {
         adapter = new PhraseAdapter(phraseList);
         recyclerView.setAdapter(adapter);
     }
+
+    private View getParentTill(View target, int parentId) {
+        View parent = (View) target.getParent();
+
+        while(parent.getId() != parentId) {
+            parent = (View) parent.getParent();
+        }
+
+        return parent;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        ((PhraseAdapter) adapter).setOnItemClickListener(new PhraseAdapter
-                .MyClickListener() {
+        ((PhraseAdapter) adapter).setOnItemClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(int position, View v) {
+            public void onClick(View v) {
+                Object id = getParentTill(v, R.id.phrasecardRoot).getTag();
+                String idStr = id.toString();
+                int idNum = (Integer.valueOf(idStr))-1;
+                Integer phraseFavorite = phraseList.get(idNum).getFavorite();
+                Phrase phrase = phraseList.get(idNum);
                 switch (v.getId()) {
                     case R.id.ivFavorite:
+                        ImageView ivFavorite = (ImageView) v.findViewById(R.id.ivFavorite);
                         //Немного оптимизировать phraseList.get(position) в отдельную переменную
-                        if (phraseList.get(position).getFavorite().equals(0)) {
-                            v.setBackgroundResource(android.R.drawable.star_on);
-                            phraseList.get(position).setFavorite(1);
-                            phraseDao.update(phraseList.get(position));
+                        if (phraseFavorite.equals(0)) {
+                            ivFavorite.setImageResource(android.R.drawable.star_on);
+                            phrase.setFavorite(1);
+                            phraseDao.update(phrase);
+                            favoriteFragment.refresh();
                         } else {
-                            v.setBackgroundResource(android.R.drawable.star_off);
-                            phraseList.get(position).setFavorite(0);
-                            phraseDao.update(phraseList.get(position));
+                            ivFavorite.setImageResource(android.R.drawable.star_off);
+                            phrase.setFavorite(0);
+                            phraseDao.update(phrase);
+                            favoriteFragment.refresh();
                         }
                         break;
                 }
-                Log.i("phrasebook", " Clicked on Item " + position);
             }
         });
     }

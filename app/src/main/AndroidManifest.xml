@@ -20,22 +20,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PhrasesActivity"
-            android:label="@string/title_activity_phrases"
+            android:name=".PhraseActivity"
+            android:label="@string/title_activity_phrase"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.r_mobile.phasebook.MainActivity" />
         </activity>
         <activity
-            android:name=".PhraseActivity"
-            android:label="@string/title_activity_phrase"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".AddPhraseActivity"
             android:label="@string/title_activity_add_phrase"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

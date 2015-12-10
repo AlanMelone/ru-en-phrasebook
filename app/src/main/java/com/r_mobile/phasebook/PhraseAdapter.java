@@ -21,15 +21,15 @@ import java.util.List;
 public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObjectHolder> {
 
     private List<Phrase> mDataset;
-    private static MyClickListener myClickListener;
+    private View.OnClickListener myClickListener;
 
-
-    public static class DataObjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class DataObjectHolder extends RecyclerView.ViewHolder {
 
         TextView tvPhrase;
         TextView tvTranscription;
         TextView tvTranslate;
         ImageView ivFavorite;
+        View holdingView;
 
         public DataObjectHolder(View itemView) {
             super(itemView);
@@ -37,18 +37,12 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
             tvTranscription = (TextView) itemView.findViewById(R.id.tvTranscription);
             tvTranslate = (TextView) itemView.findViewById(R.id.tvTranslate);
             ivFavorite = (ImageView) itemView.findViewById(R.id.ivFavorite);
-            ivFavorite.setOnClickListener(this);
             Log.i("phrasebook", "Adding Listener");
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            myClickListener.onItemClick(getAdapterPosition(), v);
+            holdingView = itemView;
         }
     }
 
-    public void setOnItemClickListener(MyClickListener myClickListener) {
+    public void setOnItemClickListener(View.OnClickListener myClickListener) {
         this.myClickListener = myClickListener;
     }
 
@@ -71,11 +65,15 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         holder.tvPhrase.setText(mDataset.get(position).getPhrase());
         holder.tvTranscription.setText(mDataset.get(position).getTranslateList().get(0).getTranscription());
         holder.tvTranslate.setText(mDataset.get(position).getTranslateList().get(0).getContent());
+
         if (mDataset.get(position).getFavorite().equals(1)) {
             holder.ivFavorite.setImageResource(android.R.drawable.star_on);
         } else {
             holder.ivFavorite.setImageResource(android.R.drawable.star_off);
         }
+
+        holder.ivFavorite.setOnClickListener(myClickListener);
+        holder.holdingView.setTag(mDataset.get(position).getId());
     }
 
     public void addItem(Phrase dataObj, int index) {
@@ -91,9 +89,5 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
     @Override
     public int getItemCount() {
         return mDataset.size();
-    }
-
-    public interface MyClickListener {
-        void onItemClick(int position, View v);
     }
 }

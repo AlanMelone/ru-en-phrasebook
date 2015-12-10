@@ -1,5 +1,6 @@
 package com.r_mobile.phasebook;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.r_mobile.DaoSession;
 import com.r_mobile.Phrase;
@@ -26,8 +28,9 @@ public class OwnPhrasesFragment extends Fragment {
 
     List<Phrase> phraseList;
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
+    PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
+    View.OnClickListener onItemClickListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,8 +45,19 @@ public class OwnPhrasesFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new PhraseAdapter(phraseList);
-        recyclerView.setAdapter(adapter);
+        if (onItemClickListener != null) {
+            adapter.setOnItemClickListener(onItemClickListener);
+        }
 
+
+        recyclerView.setAdapter(adapter);
         return rootView;
+    }
+
+    public void setOnItemClickListener(View.OnClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+        if (adapter != null) {
+            adapter.setOnItemClickListener(onItemClickListener);
+        }
     }
 }
