@@ -24,6 +24,7 @@ public class PhraseActivity extends AppCompatActivity {
     private PhraseDao phraseDao;
 
     List<Phrase> phraseList;
+    List<Phrase> allPhraseList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
@@ -52,6 +53,7 @@ public class PhraseActivity extends AppCompatActivity {
         daoSession = ((PhraseBookApp) getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
 
+        allPhraseList = phraseDao.loadAll();
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(intent.getLongExtra("categoryID", 2))).list();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_phrases);
         recyclerView.setHasFixedSize(true);
@@ -80,8 +82,8 @@ public class PhraseActivity extends AppCompatActivity {
                 Object id = getParentTill(v, R.id.phrasecardRoot).getTag();
                 String idStr = id.toString();
                 int idNum = (Integer.valueOf(idStr))-1;
-                Integer phraseFavorite = phraseList.get(idNum).getFavorite();
-                Phrase phrase = phraseList.get(idNum);
+                Integer phraseFavorite = allPhraseList.get(idNum).getFavorite();
+                Phrase phrase = allPhraseList.get(idNum);
                 switch (v.getId()) {
                     case R.id.ivFavorite:
                         ImageView ivFavorite = (ImageView) v.findViewById(R.id.ivFavorite);
@@ -90,10 +92,12 @@ public class PhraseActivity extends AppCompatActivity {
                             ivFavorite.setImageResource(android.R.drawable.star_on);
                             phrase.setFavorite(1);
                             phraseDao.update(phrase);
+                            recyclerView.setAdapter(adapter);
                         } else {
                             ivFavorite.setImageResource(android.R.drawable.star_off);
                             phrase.setFavorite(0);
                             phraseDao.update(phrase);
+                            recyclerView.setAdapter(adapter);
                         }
                         break;
                 }
