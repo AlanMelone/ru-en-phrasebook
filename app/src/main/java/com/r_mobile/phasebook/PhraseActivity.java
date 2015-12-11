@@ -23,8 +23,6 @@ public class PhraseActivity extends AppCompatActivity {
     private DaoSession daoSession;
     private PhraseDao phraseDao;
 
-    private FavoriteFragment favoriteFragment;
-
     List<Phrase> phraseList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
@@ -92,12 +90,10 @@ public class PhraseActivity extends AppCompatActivity {
                             ivFavorite.setImageResource(android.R.drawable.star_on);
                             phrase.setFavorite(1);
                             phraseDao.update(phrase);
-                            favoriteFragment.refresh();
                         } else {
                             ivFavorite.setImageResource(android.R.drawable.star_off);
                             phrase.setFavorite(0);
                             phraseDao.update(phrase);
-                            favoriteFragment.refresh();
                         }
                         break;
                 }

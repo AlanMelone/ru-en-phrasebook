@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<Phrase> allPhrases;
     private DaoSession daoSession;
     private PhraseDao phraseDao;
-    private  FavoriteFragment favoriteFragment;
+    private FavoriteFragment favoriteFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +121,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return parent;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (favoriteFragment.isAdded()) {
+            favoriteFragment.refresh();
+        }
     }
 
     @Override
