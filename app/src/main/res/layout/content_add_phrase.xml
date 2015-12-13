@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.r_mobile.phasebook.AddPhraseActivity"
-    tools:showIn="@layout/activity_add_phrase">
+    tools:showIn="@layout/activity_add_phrase"
+    android:padding="16dp">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -24,7 +25,8 @@
             android:text="@string/category"
             android:id="@+id/tvAddCategory"
             android:gravity="center_vertical|center_horizontal"
-            android:layout_marginRight="15dp" />
+            android:layout_marginRight="15dp"
+            android:fontFamily="sans-serif" />
 
         <Spinner
             android:layout_width="wrap_content"
@@ -40,19 +42,12 @@
         android:id="@+id/linearLayout4"
         android:layout_marginTop="15dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/phrase"
-            android:id="@+id/tvPhrase"
-            android:layout_marginRight="15dp"
-            android:gravity="center_vertical|center_horizontal" />
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etPhrase" />
+            android:id="@+id/etPhrase"
+            android:inputType="text"
+            android:hint="@string/PhraseHint" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,19 +58,12 @@
         android:id="@+id/linearLayout5"
         android:layout_marginTop="15dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/transcription"
-            android:id="@+id/tvTranscription"
-            android:layout_marginRight="15dp"
-            android:gravity="center_vertical|center_horizontal" />
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etTranscription" />
+            android:id="@+id/etTranscription"
+            android:inputType="text"
+            android:hint="@string/TranscriptionHint" />
     </LinearLayout>
 
     <LinearLayout
@@ -86,19 +74,12 @@
         android:layout_marginTop="15dp"
         android:id="@+id/linearLayout6">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/translate"
-            android:id="@+id/tvTranslate"
-            android:layout_marginRight="15dp"
-            android:gravity="center_vertical|center_horizontal" />
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etTranslate" />
+            android:id="@+id/etTranslate"
+            android:inputType="text"
+            android:hint="@string/TranslateHint" />
     </LinearLayout>
 
     <LinearLayout
@@ -106,16 +87,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/linearLayout6"
-        android:gravity="center_vertical|center_horizontal">
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:paddingTop="5dp">
 
         <Button
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addPhrase"
             android:id="@+id/btnAddPhrase"
-            android:gravity="center_vertical"
-            android:layout_marginTop="15dp"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:elevation="8dp"
+            android:theme="@style/AddPhraseButton"/>
     </LinearLayout>
 
 </RelativeLayout>

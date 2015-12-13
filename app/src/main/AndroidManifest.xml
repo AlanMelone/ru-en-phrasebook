@@ -31,7 +31,11 @@
         <activity
             android:name=".AddPhraseActivity"
             android:label="@string/title_activity_add_phrase"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.r_mobile.phasebook.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

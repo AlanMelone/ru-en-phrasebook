@@ -3,22 +3,6 @@
     <string name="inputWords">Поиск/Воспроизведение</string>
     <string name="categories">Категории</string>
     <string name="favorites">Избранное</string>
-
-    <string-array name="categories_names_ru">
-        <item>Общие</item>
-        <item>В ресторане</item>
-        <item>В городе</item>
-        <item>Взаимопонимание</item>
-        <item>В дороге</item>
-        <item>Даты и время</item>
-        <item>Знакомство</item>
-        <item>Обмен денег</item>
-        <item>Приветствие</item>
-        <item>Прощание</item>
-        <item>Поздравление, пожелания, комплименты</item>
-        <item>Черезвычайные ситуации</item>
-        <item>Бонус</item>
-    </string-array>
     <string name="title_activity_phrases">Фразы</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_phrase">Activity</string>
@@ -29,4 +13,8 @@
     <string name="category">Категория</string>
     <string name="addPhrase">Добавть</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="DecriptionPhraseCard">contentDescriptionCard</string>
+    <string name="PhraseHint">Фраза</string>
+    <string name="TranscriptionHint">Транскрипция</string>
+    <string name="TranslateHint">Перевод</string>
 </resources>

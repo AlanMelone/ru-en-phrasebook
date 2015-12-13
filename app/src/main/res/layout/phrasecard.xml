@@ -88,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/ivFavorite"
                         android:src="@android:drawable/star_off"
-                        android:contentDescription="contentDescriptionCard" />
+                        android:contentDescription="@string/DecriptionPhraseCard" />
                 </LinearLayout>
 
             </LinearLayout>
