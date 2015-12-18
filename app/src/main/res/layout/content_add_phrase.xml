@@ -99,8 +99,7 @@
             android:id="@+id/btnAddPhrase"
             android:textAlignment="center"
             android:textColor="#ffffff"
-            android:elevation="8dp"
-            android:theme="@style/AddPhraseButton"/>
+            android:elevation="8dp" />
     </LinearLayout>
 
 </RelativeLayout>

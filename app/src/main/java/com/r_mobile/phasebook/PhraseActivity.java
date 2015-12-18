@@ -14,10 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.r_mobile.DaoSession;
-import com.r_mobile.Phrase;
-import com.r_mobile.PhraseBookApp;
-import com.r_mobile.PhraseDao;
+import com.r_mobile.phasebook.greenDao.DaoSession;
+import com.r_mobile.phasebook.greenDao.Phrase;
+import com.r_mobile.phasebook.greenDao.PhraseBookApp;
+import com.r_mobile.phasebook.greenDao.PhraseDao;
+import com.r_mobile.phasebook.adapters.PhraseAdapter;
 
 import java.util.List;
 

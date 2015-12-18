@@ -1,13 +1,15 @@
-package com.r_mobile.phasebook;
+package com.r_mobile.phasebook.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.r_mobile.Category;
+import com.r_mobile.phasebook.greenDao.Category;
+import com.r_mobile.phasebook.R;
 
 import java.util.List;
 
@@ -19,8 +21,9 @@ public class CategoryAdapter extends BaseAdapter {
     Context cntx;
     LayoutInflater lInflater;
     List<Category> categoryList;
+    AdapterView.OnItemClickListener onItemClickListener;
 
-    CategoryAdapter (Context context, List<Category> categories) {
+    public CategoryAdapter (Context context, List<Category> categories) {
         cntx = context;
         categoryList = categories;
         lInflater = (LayoutInflater) cntx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -54,5 +57,9 @@ public class CategoryAdapter extends BaseAdapter {
 
     public Category getCategory(int position) {
         return ((Category) getItem(position));
+    }
+
+    public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
+        this.setOnItemClickListener(onItemClickListener);
     }
 }

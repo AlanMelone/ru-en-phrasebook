@@ -17,4 +17,10 @@
     <string name="PhraseHint">Фраза</string>
     <string name="TranscriptionHint">Транскрипция</string>
     <string name="TranslateHint">Перевод</string>
+    <string name="searchPhraseHint">Введите фразу</string>
+    <string name="searchPhraseTitle">Поиск фраз</string>
+    <string name="title_activity_searchable">Результаты поиска</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

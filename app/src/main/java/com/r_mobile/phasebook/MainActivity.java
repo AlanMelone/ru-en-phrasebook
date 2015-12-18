@@ -1,29 +1,34 @@
 package com.r_mobile.phasebook;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TextView;
 
-import com.r_mobile.DaoSession;
-import com.r_mobile.Phrase;
-import com.r_mobile.PhraseBookApp;
-import com.r_mobile.PhraseDao;
+import com.r_mobile.phasebook.greenDao.DaoSession;
+import com.r_mobile.phasebook.greenDao.Phrase;
+import com.r_mobile.phasebook.greenDao.PhraseBookApp;
+import com.r_mobile.phasebook.greenDao.PhraseDao;
+import com.r_mobile.phasebook.adapters.TabsPagerAdapter;
+import com.r_mobile.phasebook.fragments.CategoriesFragment;
+import com.r_mobile.phasebook.fragments.FavoriteFragment;
+import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
+import com.r_mobile.phasebook.fragments.PhrasesFragment;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private TabsPagerAdapter mAdapter;
     private ViewPager mViewPager;
@@ -34,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DaoSession daoSession;
     private PhraseDao phraseDao;
     private FavoriteFragment favoriteFragment;
+    private CategoriesFragment categoriesFragment;
+    private PhrasesFragment phrasesFragment;
+    private OwnPhrasesFragment ownPhrasesFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +50,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        CharSequence Titles[] = {"Свои", "Категории", "Избранное"};
+        CharSequence Titles[] = {"Свои", "Фразы", "Избранное"};
         int NumbOfTabs = 3;
+
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
 
         daoSession = ((PhraseBookApp) this.getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
@@ -52,36 +63,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         favoritePhrases = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).list();
         allPhrases = phraseDao.loadAll();
 
+        categoriesFragment = new CategoriesFragment();
+        ownPhrasesFragment = new OwnPhrasesFragment();
+        favoriteFragment = new FavoriteFragment();
+        categoriesFragment = new CategoriesFragment();
+        phrasesFragment = new PhrasesFragment();
+
         //Создаем адаптр
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), Titles, NumbOfTabs);
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mAdapter.setFragment(0, ownPhrasesFragment);
+        mAdapter.setFragment(1, categoriesFragment);
+        mAdapter.setFragment(2, favoriteFragment);
 
         mViewPager.setAdapter(mAdapter);
+        mViewPager.setCurrentItem(1);
 
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
-
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-
         tabs.setViewPager(mViewPager);
-        mViewPager.setCurrentItem(1);
-
-        CategoriesFragment categoriesFragment = new CategoriesFragment();
-        OwnPhrasesFragment ownPhrasesFragment = new OwnPhrasesFragment();
-        favoriteFragment = new FavoriteFragment();
 
         ownPhrasesFragment.setOnItemClickListener(this);
         favoriteFragment.setOnItemClickListener(this);
-
-        mAdapter.setCategoriesFragment(categoriesFragment);
-        mAdapter.setFavoriteFragment(favoriteFragment);
-        mAdapter.setOwnPhrasesFragment(ownPhrasesFragment);
+        categoriesFragment.setOnItemClickListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +107,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search_action).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+        SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //MainActivity.this.allArrayPhrase.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        };
+
+        searchView.setOnQueryTextListener(onQueryTextListener);
+
         return true;
     }
 
@@ -156,5 +187,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mAdapter.setFragment(1, phrasesFragment);
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.setCurrentItem(1);
+
+        tabs.setDistributeEvenly(true);
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
+            }
+        });
+        tabs.setViewPager(mViewPager);
     }
 }

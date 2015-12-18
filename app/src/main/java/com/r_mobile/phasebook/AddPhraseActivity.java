@@ -3,25 +3,22 @@ package com.r_mobile.phasebook;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.r_mobile.Category;
-import com.r_mobile.CategoryDao;
-import com.r_mobile.DaoSession;
-import com.r_mobile.Phrase;
-import com.r_mobile.PhraseBookApp;
-import com.r_mobile.PhraseDao;
-import com.r_mobile.Translate;
+import com.r_mobile.phasebook.greenDao.Category;
+import com.r_mobile.phasebook.greenDao.CategoryDao;
+import com.r_mobile.phasebook.greenDao.DaoSession;
+import com.r_mobile.phasebook.greenDao.Phrase;
+import com.r_mobile.phasebook.greenDao.PhraseBookApp;
+import com.r_mobile.phasebook.greenDao.Translate;
+import com.r_mobile.phasebook.adapters.SpinnerAddAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AddPhraseActivity extends AppCompatActivity implements View.OnClickListener {
@@ -44,22 +41,26 @@ public class AddPhraseActivity extends AppCompatActivity implements View.OnClick
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Добавляем кнопку назад на экш бар
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
+        //Определяем обьекты на вьюшке
         etPhrase = (EditText) findViewById(R.id.etPhrase);
         etTranscription = (EditText) findViewById(R.id.etTranscription);
         etTranslate = (EditText) findViewById(R.id.etTranslate);
         btnAddPhrase = (Button) findViewById(R.id.btnAddPhrase);
+        spinnerCategories = (Spinner) findViewById(R.id.spinnerCategories);
+
+        //Задаем обработчик кнопки
         btnAddPhrase.setOnClickListener(this);
 
+        //Получаем таблицу категории
         daoSession = ((PhraseBookApp) getApplicationContext()).daoSession;
         categoryDao = daoSession.getCategoryDao();
 
+        //Достаем из базы все записи о категориях
         categoryList = categoryDao.loadAll();
-
-        spinnerCategories = (Spinner) findViewById(R.id.spinnerCategories);
 
         //Создаем адаптер
         SpinnerAddAdapter spinnerAddAdapter = new SpinnerAddAdapter(this, android.R.layout.simple_list_item_1, categoryList);

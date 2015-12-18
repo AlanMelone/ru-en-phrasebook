@@ -13,7 +13,7 @@ import java.io.OutputStream;
 /**
  * Created by nemol on 11.11.2015.
  */
-public class Copy extends Application {
+public class Copy {
 
 
     public Copy() {

@@ -1,4 +1,4 @@
-package com.r_mobile.phasebook;
+package com.r_mobile.phasebook.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,15 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.r_mobile.DaoSession;
-import com.r_mobile.Phrase;
-import com.r_mobile.PhraseBookApp;
-import com.r_mobile.PhraseDao;
+import com.r_mobile.phasebook.greenDao.Phrase;
+import com.r_mobile.phasebook.R;
 
 import java.util.List;
 
 /**
- * Created by Admin on 18.11.2015.
+ * Created by r-mobile on 18.11.2015.
  */
 public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObjectHolder> {
 

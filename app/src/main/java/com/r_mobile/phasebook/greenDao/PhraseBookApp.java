@@ -1,9 +1,11 @@
-package com.r_mobile;
+package com.r_mobile.phasebook.greenDao;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.r_mobile.phasebook.Copy;
+import com.r_mobile.phasebook.greenDao.DaoMaster;
+import com.r_mobile.phasebook.greenDao.DaoSession;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.r_mobile.phasebook;
+package com.r_mobile.phasebook.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.r_mobile.Category;
+import com.r_mobile.phasebook.greenDao.Category;
 
 import java.util.List;
 
