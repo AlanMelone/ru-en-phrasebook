@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 
+import com.r_mobile.phasebook.fragments.PhrasesFragment;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.Phrase;
 import com.r_mobile.phasebook.greenDao.PhraseBookApp;
@@ -24,7 +25,6 @@ import com.r_mobile.phasebook.adapters.TabsPagerAdapter;
 import com.r_mobile.phasebook.fragments.CategoriesFragment;
 import com.r_mobile.phasebook.fragments.FavoriteFragment;
 import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
-import com.r_mobile.phasebook.fragments.PhrasesFragment;
 
 import java.util.List;
 
@@ -191,7 +191,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("categoryID", position+1);
+        phrasesFragment.setArguments(bundle);
+
         mAdapter.setFragment(1, phrasesFragment);
+
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(1);
 
@@ -202,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
+
         tabs.setViewPager(mViewPager);
     }
 }

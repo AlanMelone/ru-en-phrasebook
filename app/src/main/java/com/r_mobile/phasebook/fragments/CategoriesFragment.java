@@ -42,13 +42,6 @@ public class CategoriesFragment extends Fragment {
         ListView lvCategories = (ListView)rootView.findViewById(R.id.lvCategories);
 
         lvCategories.setAdapter(cAdapter); //Присваиваем адаптер листвюшке
-        /*
-                Intent intent = new Intent(getActivity(), PhraseActivity.class);
-                intent.putExtra("activityName", cAdapter.getCategory(position).getLabel()); //Передаем название нашей категории
-                intent.putExtra("categoryID", cAdapter.getCategory(position).getId()); //Передаем ID категории
-                startActivity(intent); //Переходим на следущее активити
-                Log.d("phrasebook", cAdapter.getCategory(position).getLabel());
-                */
         //Определяем нажатие на элемент листвью
         lvCategories.setOnItemClickListener(onItemClickListener);
 

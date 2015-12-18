@@ -1,32 +1,27 @@
 package com.r_mobile.phasebook.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.r_mobile.phasebook.R;
+import com.r_mobile.phasebook.adapters.PhraseAdapter;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.Phrase;
+import com.r_mobile.phasebook.greenDao.PhraseBookApp;
 import com.r_mobile.phasebook.greenDao.PhraseDao;
 
 import java.util.List;
 
-
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PhrasesFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PhrasesFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Created by r-mobile on 18.12.2015.
  */
-public class PhrasesFragment extends Fragment {
 
-    private Context ctx;
+public class PhrasesFragment extends Fragment {
 
     private DaoSession daoSession;
     private PhraseDao phraseDao;
@@ -37,18 +32,22 @@ public class PhrasesFragment extends Fragment {
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_phrases, container, false);
+        int categoryID = getArguments().getInt("categoryID");
 
+        daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
+        phraseDao = daoSession.getPhraseDao();
 
-        this.ctx = getActivity().getApplicationContext();
-    }
+        allPhraseList = phraseDao.loadAll();
+        phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_phrases_all);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new PhraseAdapter(phraseList);
+        recyclerView.setAdapter(adapter);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_phrases, container, false);
+        return rootView;
     }
 }
