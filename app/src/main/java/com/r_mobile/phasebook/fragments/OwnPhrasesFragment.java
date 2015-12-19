@@ -48,8 +48,6 @@ public class OwnPhrasesFragment extends Fragment {
         if (onItemClickListener != null) {
             adapter.setOnItemClickListener(onItemClickListener);
         }
-
-
         recyclerView.setAdapter(adapter);
         return rootView;
     }

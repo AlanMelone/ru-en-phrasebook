@@ -1,15 +1,18 @@
 package com.r_mobile.phasebook;
 
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private CategoriesFragment categoriesFragment;
     private PhrasesFragment phrasesFragment;
     private OwnPhrasesFragment ownPhrasesFragment;
+    private FragmentTransaction tx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ownPhrasesFragment.setOnItemClickListener(this);
         favoriteFragment.setOnItemClickListener(this);
         categoriesFragment.setOnItemClickListener(this);
+        phrasesFragment.setOnItemClickListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -192,9 +197,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Bundle bundle = new Bundle();
-        bundle.putInt("categoryID", position+1);
+        bundle.putInt("categoryID", position + 1);
         phrasesFragment.setArguments(bundle);
 
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        tx = fragmentManager.beginTransaction();
+        tx.add(R.id.categories_fragment, phrasesFragment).addToBackStack("tag");
+        tx.show(phrasesFragment);
+        tx.attach(phrasesFragment);
+        tx.commit();
+        //tx.replace(R.id.categories_fragment, phrasesFragment).addToBackStack("tag").commit();
+        //tx.remove(categoriesFragment);
+
+        /*
         mAdapter.setFragment(1, phrasesFragment);
 
         mViewPager.setAdapter(mAdapter);
@@ -209,5 +224,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         tabs.setViewPager(mViewPager);
+        */
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
+        if (count == 0 && !categoriesFragment.isHidden()) {
+            super.onBackPressed();
+            //additional code
+        } else {
+            getFragmentManager().popBackStack();
+        }
     }
 }
