@@ -17,8 +17,9 @@ public class TabsPagerAdapter extends FragmentStatePagerAdapter {
 
     CharSequence Titles[];
     int NumbOfTabs;
+    private final FragmentManager fragmentManager;
+    private Fragment fragmentTemp;
 
-    Fragment[] allFragments;
     OwnPhrasesFragment ownPhrasesFragment;
     CategoriesFragment categoriesFragment;
     FavoriteFragment favoriteFragment;
@@ -27,22 +28,40 @@ public class TabsPagerAdapter extends FragmentStatePagerAdapter {
     public TabsPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabs) {
         super(fm);
 
+        this.fragmentManager = fm;
         this.Titles = mTitles;
         this.NumbOfTabs = mNumbOfTabs;
-        this.allFragments = new Fragment[NumbOfTabs];
     }
 
     @Override
     public Fragment getItem(int index) {
         switch (index) {
             case 0:
-                return allFragments[0]; //ownPhrasesFragment
+                return ownPhrasesFragment.newInstance(); //ownPhrasesFragment
             case 1:
-                return allFragments[1]; //categoriesFragment+phrasesFragment
+                if (fragmentTemp == null) {
+                    fragmentTemp = categoriesFragment.newInstance(new CategoriesFragmentListener() {
+                        @Override
+                        public void onSwitchToNextFragment() {
+                            fragmentManager.beginTransaction().remove(fragmentTemp).commit();
+                            fragmentTemp = phrasesFragment.newInstance();
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+                return fragmentTemp; //categoriesFragment+phrasesFragment
             case 2:
-                return allFragments[2]; //favoriteFragment
+                return favoriteFragment.newInstance(); //favoriteFragment
         }
         return null;
+    }
+
+    @Override
+    public int getItemPosition(Object object)
+    {
+        if (object instanceof CategoriesFragment && fragmentTemp instanceof PhrasesFragment)
+            return POSITION_NONE;
+        return POSITION_UNCHANGED;
     }
 
     @Override
@@ -55,12 +74,20 @@ public class TabsPagerAdapter extends FragmentStatePagerAdapter {
         return NumbOfTabs;
     }
 
-    public void setFragment(int position, Fragment fragment) {
-        allFragments[position] = fragment;
+    public void setOwnPhrasesFragment(OwnPhrasesFragment ownPhrasesFragment) {
+        this.ownPhrasesFragment = ownPhrasesFragment;
     }
 
-    public Fragment getFragment(int position) {
-        return allFragments[position];
+    public void setCategoriesFragment(CategoriesFragment categoriesFragment) {
+        this.categoriesFragment = categoriesFragment;
+    }
+
+    public void setFavoriteFragment(FavoriteFragment favoriteFragment) {
+        this.favoriteFragment = favoriteFragment;
+    }
+
+    public void setPhrasesFragment(PhrasesFragment phrasesFragment) {
+        this.phrasesFragment = phrasesFragment;
     }
 
     public OwnPhrasesFragment getOwnPhrasesFragment() { return ownPhrasesFragment; }

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.r_mobile.phasebook.adapters.CategoriesFragmentListener;
 import com.r_mobile.phasebook.greenDao.Category;
 import com.r_mobile.phasebook.greenDao.CategoryDao;
 import com.r_mobile.phasebook.greenDao.DaoSession;
@@ -28,6 +29,11 @@ public class CategoriesFragment extends Fragment {
     CategoryAdapter cAdapter; //Адаптер категорий
     List<Category> categoryList; //Лист с категориями
     AdapterView.OnItemClickListener onItemClickListener;
+
+    public static CategoriesFragment newInstance(CategoriesFragmentListener categoriesFragmentListener) {
+        CategoriesFragment categoriesFragment = new CategoriesFragment();
+        return categoriesFragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

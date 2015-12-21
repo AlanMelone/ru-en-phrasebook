@@ -35,6 +35,11 @@ public class PhrasesFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
 
+    public static PhrasesFragment newInstance() {
+        PhrasesFragment phrasesFragment = new PhrasesFragment();
+        return phrasesFragment;
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_phrases, container, false);
         int categoryID = getArguments().getInt("categoryID");

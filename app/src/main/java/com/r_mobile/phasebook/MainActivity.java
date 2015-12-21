@@ -76,9 +76,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Создаем адаптр
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), Titles, NumbOfTabs);
 
-        mAdapter.setFragment(0, ownPhrasesFragment);
-        mAdapter.setFragment(1, categoriesFragment);
-        mAdapter.setFragment(2, favoriteFragment);
+        mAdapter.setPhrasesFragment(phrasesFragment);
+        mAdapter.setCategoriesFragment(categoriesFragment);
+        mAdapter.setFavoriteFragment(favoriteFragment);
+        mAdapter.setOwnPhrasesFragment(ownPhrasesFragment);
 
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(1);
@@ -200,16 +201,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bundle.putInt("categoryID", position + 1);
         phrasesFragment.setArguments(bundle);
 
+        //Что здесь написать, чтобы вызвать другой фрагмент?
+        
+        /*
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         tx = fragmentManager.beginTransaction();
-        tx.add(R.id.categories_fragment, phrasesFragment).addToBackStack("tag");
-        tx.show(phrasesFragment);
-        tx.attach(phrasesFragment);
+        tx.remove(categoriesFragment);
+        tx.add(R.id.viewpager, phrasesFragment);
+        //tx.replace(R.id.viewpager, phrasesFragment);
         tx.commit();
         //tx.replace(R.id.categories_fragment, phrasesFragment).addToBackStack("tag").commit();
         //tx.remove(categoriesFragment);
 
-        /*
+
         mAdapter.setFragment(1, phrasesFragment);
 
         mViewPager.setAdapter(mAdapter);
@@ -230,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         int count = getFragmentManager().getBackStackEntryCount();
-        if (count == 0 && !categoriesFragment.isHidden()) {
+        if (count == 0) {
             super.onBackPressed();
             //additional code
         } else {

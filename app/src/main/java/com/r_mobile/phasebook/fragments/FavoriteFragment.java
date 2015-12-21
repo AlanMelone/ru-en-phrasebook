@@ -30,6 +30,11 @@ public class FavoriteFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
 
+    public static FavoriteFragment newInstance() {
+        FavoriteFragment favoriteFragment = new FavoriteFragment();
+        return favoriteFragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
