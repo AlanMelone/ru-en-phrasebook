@@ -28,7 +28,7 @@ public class CategoriesFragment extends Fragment {
 
     CategoryAdapter cAdapter; //Адаптер категорий
     List<Category> categoryList; //Лист с категориями
-    AdapterView.OnItemClickListener onItemClickListener;
+    AdapterView.OnItemClickListener onItemClickListener; //Добавляем слушатееля на клик по полю листа
 
     public static CategoriesFragment newInstance(CategoriesFragmentListener categoriesFragmentListener) {
         CategoriesFragment categoriesFragment = new CategoriesFragment();
@@ -56,9 +56,6 @@ public class CategoriesFragment extends Fragment {
 
     public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
-        if (cAdapter != null) {
-            cAdapter.setOnItemClickListener(onItemClickListener);
-        }
     }
 }
 

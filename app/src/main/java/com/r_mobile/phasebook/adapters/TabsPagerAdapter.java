@@ -2,18 +2,20 @@ package com.r_mobile.phasebook.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.r_mobile.phasebook.fragments.CategoriesFragment;
 import com.r_mobile.phasebook.fragments.FavoriteFragment;
 import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
 import com.r_mobile.phasebook.fragments.PhrasesFragment;
+import com.r_mobile.phasebook.fragments.RootFragment;
 
 /**
  * Created by r-mobile on 28.10.2015.
  */
 
-public class TabsPagerAdapter extends FragmentStatePagerAdapter {
+public class TabsPagerAdapter extends FragmentPagerAdapter {
 
     CharSequence Titles[];
     int NumbOfTabs;
@@ -24,6 +26,7 @@ public class TabsPagerAdapter extends FragmentStatePagerAdapter {
     CategoriesFragment categoriesFragment;
     FavoriteFragment favoriteFragment;
     PhrasesFragment phrasesFragment;
+    RootFragment rootFragment;
 
     public TabsPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabs) {
         super(fm);
@@ -37,8 +40,9 @@ public class TabsPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int index) {
         switch (index) {
             case 0:
-                return ownPhrasesFragment.newInstance(); //ownPhrasesFragment
+                return ownPhrasesFragment; //ownPhrasesFragment
             case 1:
+                /*
                 if (fragmentTemp == null) {
                     fragmentTemp = categoriesFragment.newInstance(new CategoriesFragmentListener() {
                         @Override
@@ -50,8 +54,10 @@ public class TabsPagerAdapter extends FragmentStatePagerAdapter {
                     });
                 }
                 return fragmentTemp; //categoriesFragment+phrasesFragment
+                */
+                return rootFragment;
             case 2:
-                return favoriteFragment.newInstance(); //favoriteFragment
+                return favoriteFragment; //favoriteFragment
         }
         return null;
     }
@@ -74,6 +80,10 @@ public class TabsPagerAdapter extends FragmentStatePagerAdapter {
         return NumbOfTabs;
     }
 
+    public void setRootFragment(RootFragment rootFragment) {
+        this.rootFragment = rootFragment;
+    }
+
     public void setOwnPhrasesFragment(OwnPhrasesFragment ownPhrasesFragment) {
         this.ownPhrasesFragment = ownPhrasesFragment;
     }
@@ -88,6 +98,10 @@ public class TabsPagerAdapter extends FragmentStatePagerAdapter {
 
     public void setPhrasesFragment(PhrasesFragment phrasesFragment) {
         this.phrasesFragment = phrasesFragment;
+    }
+
+    public RootFragment getRootFragment() {
+        return rootFragment;
     }
 
     public OwnPhrasesFragment getOwnPhrasesFragment() { return ownPhrasesFragment; }

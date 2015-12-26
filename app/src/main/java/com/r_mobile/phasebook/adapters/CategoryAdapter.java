@@ -21,7 +21,6 @@ public class CategoryAdapter extends BaseAdapter {
     Context cntx;
     LayoutInflater lInflater;
     List<Category> categoryList;
-    AdapterView.OnItemClickListener onItemClickListener;
 
     public CategoryAdapter (Context context, List<Category> categories) {
         cntx = context;
@@ -59,7 +58,4 @@ public class CategoryAdapter extends BaseAdapter {
         return ((Category) getItem(position));
     }
 
-    public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
-        this.setOnItemClickListener(onItemClickListener);
-    }
 }

@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import com.r_mobile.phasebook.fragments.PhrasesFragment;
+import com.r_mobile.phasebook.fragments.RootFragment;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.Phrase;
 import com.r_mobile.phasebook.greenDao.PhraseBookApp;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private CategoriesFragment categoriesFragment;
     private PhrasesFragment phrasesFragment;
     private OwnPhrasesFragment ownPhrasesFragment;
-    private FragmentTransaction tx;
+    private RootFragment rootFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         favoriteFragment = new FavoriteFragment();
         categoriesFragment = new CategoriesFragment();
         phrasesFragment = new PhrasesFragment();
+        rootFragment = new RootFragment();
+        rootFragment.setCategoriesFragment(categoriesFragment);
 
         //Создаем адаптр
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), Titles, NumbOfTabs);
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAdapter.setCategoriesFragment(categoriesFragment);
         mAdapter.setFavoriteFragment(favoriteFragment);
         mAdapter.setOwnPhrasesFragment(ownPhrasesFragment);
+        mAdapter.setRootFragment(rootFragment);
 
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(1);
@@ -203,16 +207,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Что здесь написать, чтобы вызвать другой фрагмент?
         
-        /*
+
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        tx = fragmentManager.beginTransaction();
-        tx.remove(categoriesFragment);
-        tx.add(R.id.viewpager, phrasesFragment);
-        //tx.replace(R.id.viewpager, phrasesFragment);
+        FragmentTransaction tx = fragmentManager.beginTransaction();
+        tx.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        tx.replace(R.id.root_frame, phrasesFragment).addToBackStack(null);
         tx.commit();
         //tx.replace(R.id.categories_fragment, phrasesFragment).addToBackStack("tag").commit();
         //tx.remove(categoriesFragment);
-
+        /*
 
         mAdapter.setFragment(1, phrasesFragment);
 
