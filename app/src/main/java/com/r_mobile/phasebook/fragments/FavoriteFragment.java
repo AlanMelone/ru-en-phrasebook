@@ -69,6 +69,8 @@ public class FavoriteFragment extends Fragment {
         if (onItemClickListener != null) {
             adapter.setOnItemClickListener(onItemClickListener);
         }
-        recyclerView.setAdapter(adapter);
+        if (recyclerView != null) {
+            recyclerView.setAdapter(adapter);
+        }
     }
 }

@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.SparseArray;
+import android.view.ViewGroup;
 
 import com.r_mobile.phasebook.fragments.CategoriesFragment;
 import com.r_mobile.phasebook.fragments.FavoriteFragment;
@@ -27,6 +29,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     FavoriteFragment favoriteFragment;
     PhrasesFragment phrasesFragment;
     RootFragment rootFragment;
+    SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
     public TabsPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabs) {
         super(fm);

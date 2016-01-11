@@ -65,9 +65,9 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         holder.tvTranslate.setText(mDataset.get(position).getTranslateList().get(0).getContent());
 
         if (mDataset.get(position).getFavorite().equals(1)) {
-            holder.ivFavorite.setImageResource(android.R.drawable.star_on);
+            holder.ivFavorite.setImageResource(R.drawable.ic_star);
         } else {
-            holder.ivFavorite.setImageResource(android.R.drawable.star_off);
+            holder.ivFavorite.setImageResource(R.drawable.ic_star_outline);
         }
 
         holder.ivFavorite.setOnClickListener(myClickListener);

@@ -1,6 +1,5 @@
 package com.r_mobile.phasebook;
 
-import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -8,11 +7,11 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         CharSequence Titles[] = {"Свои", "Фразы", "Избранное"};
-        int NumbOfTabs = 3;
-
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        int NumbOfTabs = 3; //Количество вкладок
 
         daoSession = ((PhraseBookApp) this.getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
+
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
 
         ownPhrases = phraseDao.queryBuilder().where(PhraseDao.Properties.Own.eq(1)).list();
         favoritePhrases = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).list();
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Создаем адаптр
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), Titles, NumbOfTabs);
 
+        //Передаем адаптеру все ссылки на фрагменты
         mAdapter.setPhrasesFragment(phrasesFragment);
         mAdapter.setCategoriesFragment(categoriesFragment);
         mAdapter.setFavoriteFragment(favoriteFragment);
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         tabs.setViewPager(mViewPager);
 
+        //Присваиваем обработчики
         ownPhrasesFragment.setOnItemClickListener(this);
         favoriteFragment.setOnItemClickListener(this);
         categoriesFragment.setOnItemClickListener(this);
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         Log.d("phrasebook", "asdqwe");
-        Object id = getParentTill(v, R.id.phrasecardRoot).getTag();
+        Object id = getParentTill(v, R.id.phrasecardRoot).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
         String idStr = id.toString();
         int idNum = (Integer.valueOf(idStr))-1;
         Integer phraseFavorite = allPhrases.get(idNum).getFavorite();
@@ -185,15 +186,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ImageView ivFavorite = (ImageView) v.findViewById(R.id.ivFavorite);
                 //Немного оптимизировать phraseList.get(position) в отдельную переменную
                 if (phraseFavorite.equals(0)) {
-                    ivFavorite.setImageResource(android.R.drawable.star_on);
+                    ivFavorite.setImageResource(R.drawable.ic_star);
                     phrase.setFavorite(1);
                     phraseDao.update(phrase);
                     favoriteFragment.refresh();
+                    phrasesFragment.refresh();
+                    ownPhrasesFragment.refresh();
                 } else {
-                    ivFavorite.setImageResource(android.R.drawable.star_off);
+                    ivFavorite.setImageResource(R.drawable.ic_star_outline);
                     phrase.setFavorite(0);
                     phraseDao.update(phrase);
                     favoriteFragment.refresh();
+                    phrasesFragment.refresh();
+                    ownPhrasesFragment.refresh();
                 }
                 break;
         }
@@ -205,43 +210,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bundle.putInt("categoryID", position + 1);
         phrasesFragment.setArguments(bundle);
 
-        //Что здесь написать, чтобы вызвать другой фрагмент?
-        
-
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction tx = fragmentManager.beginTransaction();
         tx.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         tx.replace(R.id.root_frame, phrasesFragment).addToBackStack(null);
         tx.commit();
-        //tx.replace(R.id.categories_fragment, phrasesFragment).addToBackStack("tag").commit();
-        //tx.remove(categoriesFragment);
-        /*
 
-        mAdapter.setFragment(1, phrasesFragment);
-
-        mViewPager.setAdapter(mAdapter);
-        mViewPager.setCurrentItem(1);
-
-        tabs.setDistributeEvenly(true);
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
-            }
-        });
-
-        tabs.setViewPager(mViewPager);
-        */
     }
 
     @Override
     public void onBackPressed() {
-        int count = getFragmentManager().getBackStackEntryCount();
-        if (count == 0) {
-            super.onBackPressed();
-            //additional code
+        if (mViewPager.getCurrentItem() == 1 && phrasesFragment.isVisible()) {
+            getSupportFragmentManager().popBackStack();
         } else {
-            getFragmentManager().popBackStack();
+            finish();
         }
     }
 }

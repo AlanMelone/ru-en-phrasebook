@@ -32,11 +32,6 @@ public class OwnPhrasesFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
 
-    public static OwnPhrasesFragment newInstance() {
-        OwnPhrasesFragment ownPhrasesFragment = new OwnPhrasesFragment();
-        return ownPhrasesFragment;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_ownphrases, container, false);
@@ -61,6 +56,12 @@ public class OwnPhrasesFragment extends Fragment {
         this.onItemClickListener = onItemClickListener;
         if (adapter != null) {
             adapter.setOnItemClickListener(onItemClickListener);
+        }
+    }
+
+    public void refresh() {
+        if (recyclerView != null) {
+            recyclerView.setAdapter(adapter);
         }
     }
 }

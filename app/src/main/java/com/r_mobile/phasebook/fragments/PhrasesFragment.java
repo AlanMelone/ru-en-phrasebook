@@ -2,14 +2,17 @@ package com.r_mobile.phasebook.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.r_mobile.phasebook.MainActivity;
 import com.r_mobile.phasebook.R;
 import com.r_mobile.phasebook.adapters.PhraseAdapter;
 import com.r_mobile.phasebook.greenDao.DaoSession;
@@ -27,6 +30,7 @@ public class PhrasesFragment extends Fragment {
 
     private DaoSession daoSession;
     private PhraseDao phraseDao;
+    private boolean isViewShown = false;
 
     List<Phrase> phraseList;
     List<Phrase> allPhraseList;
@@ -34,15 +38,18 @@ public class PhrasesFragment extends Fragment {
     PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
-
-    public static PhrasesFragment newInstance() {
-        PhrasesFragment phrasesFragment = new PhrasesFragment();
-        return phrasesFragment;
-    }
+    ActionBar actionBar;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_phrases, container, false);
         int categoryID = getArguments().getInt("categoryID");
+
+        /*
+        actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        setHasOptionsMenu(true);
+        */
 
         daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
@@ -68,4 +75,25 @@ public class PhrasesFragment extends Fragment {
             adapter.setOnItemClickListener(onItemClickListener);
         }
     }
+
+    public void refresh() {
+        if (recyclerView !=null) {
+            recyclerView.setAdapter(adapter);
+        }
+    }
+
+    /*
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        //Log.d("onOptionsItemSelected","yes");
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                actionBar.setDisplayHomeAsUpEnabled(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    */
 }
