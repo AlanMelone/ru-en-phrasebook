@@ -33,7 +33,6 @@ public class PhrasesFragment extends Fragment {
     private boolean isViewShown = false;
 
     List<Phrase> phraseList;
-    List<Phrase> allPhraseList;
     RecyclerView recyclerView;
     PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
@@ -44,17 +43,9 @@ public class PhrasesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_phrases, container, false);
         int categoryID = getArguments().getInt("categoryID");
 
-        /*
-        actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        setHasOptionsMenu(true);
-        */
-
         daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
 
-        allPhraseList = phraseDao.loadAll();
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_phrases_all);
         recyclerView.setHasFixedSize(true);

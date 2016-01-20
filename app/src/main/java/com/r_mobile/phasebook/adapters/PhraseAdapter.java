@@ -84,6 +84,10 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         notifyItemRemoved(index);
     }
 
+    public void setmDataset(List<Phrase> mDataset) {
+        this.mDataset = mDataset;
+    }
+
     @Override
     public int getItemCount() {
         return mDataset.size();

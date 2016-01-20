@@ -11,13 +11,13 @@
     <string name="transcription">Транскрипция</string>
     <string name="translate">Перевод</string>
     <string name="category">Категория</string>
-    <string name="addPhrase">Добавть</string>
+    <string name="addPhrase">Добавить</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="DecriptionPhraseCard">contentDescriptionCard</string>
     <string name="PhraseHint">Фраза</string>
     <string name="TranscriptionHint">Транскрипция</string>
     <string name="TranslateHint">Перевод</string>
-    <string name="searchPhraseHint">Введите фразу</string>
+    <string name="searchPhraseHint">Введите фразу, перевод, или транскрипцию</string>
     <string name="searchPhraseTitle">Поиск фраз</string>
     <string name="title_activity_searchable">Результаты поиска</string>
 

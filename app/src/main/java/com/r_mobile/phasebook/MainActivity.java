@@ -20,6 +20,7 @@ import android.widget.ImageView;
 
 import com.r_mobile.phasebook.fragments.PhrasesFragment;
 import com.r_mobile.phasebook.fragments.RootFragment;
+import com.r_mobile.phasebook.fragments.SearchFragment;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.Phrase;
 import com.r_mobile.phasebook.greenDao.PhraseBookApp;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private PhrasesFragment phrasesFragment;
     private OwnPhrasesFragment ownPhrasesFragment;
     private RootFragment rootFragment;
+    private SearchFragment searchFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        CharSequence Titles[] = {"Свои", "Фразы", "Избранное"};
+        CharSequence Titles[] = {"Свои", "Фразы", "Избранное"}; //Название вкладок
         int NumbOfTabs = 3; //Количество вкладок
 
         daoSession = ((PhraseBookApp) this.getApplicationContext()).daoSession;
@@ -67,12 +69,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         favoritePhrases = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).list();
         allPhrases = phraseDao.loadAll();
 
+        //Создаем фрагменты
         categoriesFragment = new CategoriesFragment();
         ownPhrasesFragment = new OwnPhrasesFragment();
         favoriteFragment = new FavoriteFragment();
         categoriesFragment = new CategoriesFragment();
         phrasesFragment = new PhrasesFragment();
         rootFragment = new RootFragment();
+        searchFragment = new SearchFragment();
         rootFragment.setCategoriesFragment(categoriesFragment);
 
         //Создаем адаптр
@@ -118,27 +122,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search_action).getActionView();
+
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search_action).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setQueryHint("Введите фразу, перевод иди транскрипцию");
 
         SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //MainActivity.this.allArrayPhrase.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText.length() > 0) {
+                    searchFragment.refreshData(newText);
+                }
+
+                if (newText.length() == 0) {
+                    getSupportFragmentManager().popBackStack();
+                }
                 return false;
             }
         };
 
+        SearchView.OnClickListener onClickListener = new SearchView.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(1);
+
+                //Делаем переход на searchFragment
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager(); //Получаем FragmentManager
+                //Стартуем транзакцию
+                FragmentTransaction tx = fragmentManager.beginTransaction();
+                tx.replace(R.id.root_frame, searchFragment).addToBackStack(null);
+                tx.commit();
+            }
+        };
+
         searchView.setOnQueryTextListener(onQueryTextListener);
+        searchView.setOnSearchClickListener(onClickListener);
 
         return true;
     }
@@ -155,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+    //Метод возвращает родителя конкретного вью-элемента
     private View getParentTill(View target, int parentId) {
         View parent = (View) target.getParent();
 
@@ -173,29 +201,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //Обработчик нажатия на карточку
     @Override
     public void onClick(View v) {
         Log.d("phrasebook", "asdqwe");
         Object id = getParentTill(v, R.id.phrasecardRoot).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
-        String idStr = id.toString();
-        int idNum = (Integer.valueOf(idStr))-1;
-        Integer phraseFavorite = allPhrases.get(idNum).getFavorite();
-        Phrase phrase = allPhrases.get(idNum);
+        String idStr = id.toString(); //Переводим id в строку
+        int idNum = (Integer.valueOf(idStr))-1; //Переводим id в int
+        Integer phraseFavorite = allPhrases.get(idNum).getFavorite(); //Получаем значение, которое указывает, что элемент в избранном
+        Phrase phrase = allPhrases.get(idNum); //Получаем фразу
         switch (v.getId()) {
-            case R.id.ivFavorite:
-                ImageView ivFavorite = (ImageView) v.findViewById(R.id.ivFavorite);
-                //Немного оптимизировать phraseList.get(position) в отдельную переменную
-                if (phraseFavorite.equals(0)) {
-                    ivFavorite.setImageResource(R.drawable.ic_star);
-                    phrase.setFavorite(1);
-                    phraseDao.update(phrase);
+            case R.id.ivFavorite: //Обрабатываем нажатие на "Избранное"
+                ImageView ivFavorite = (ImageView) v.findViewById(R.id.ivFavorite); //Получаем изображение избранного
+                //Проверяем, есть ли элемент в "Избранном"
+                if (phraseFavorite.equals(0)) { //Если нет, то добавляем
+                    ivFavorite.setImageResource(R.drawable.ic_star);  //Устанавливаем картинку
+                    phrase.setFavorite(1); //В базе меняем значение избранного на 1
+                    phraseDao.update(phrase); //Обновляем сущность
+                    //Обновляем фрагменты
                     favoriteFragment.refresh();
                     phrasesFragment.refresh();
                     ownPhrasesFragment.refresh();
-                } else {
-                    ivFavorite.setImageResource(R.drawable.ic_star_outline);
-                    phrase.setFavorite(0);
-                    phraseDao.update(phrase);
+                } else { //Если есть
+                    ivFavorite.setImageResource(R.drawable.ic_star_outline); //Устанавливаем изображение
+                    phrase.setFavorite(0); //В базе меняем значение избранного на 0
+                    phraseDao.update(phrase); //Обновляем сущность
+                    //Обновляем фрагменты
                     favoriteFragment.refresh();
                     phrasesFragment.refresh();
                     ownPhrasesFragment.refresh();
@@ -206,11 +237,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //Передаем фрагменты phraseFragment значение id категории
         Bundle bundle = new Bundle();
         bundle.putInt("categoryID", position + 1);
         phrasesFragment.setArguments(bundle);
 
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        //Делаем переход на phraseFragment
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager(); //Получаем FragmentManager
+        //Стартуем транзакцию
         FragmentTransaction tx = fragmentManager.beginTransaction();
         tx.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         tx.replace(R.id.root_frame, phrasesFragment).addToBackStack(null);
@@ -220,10 +254,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        if (mViewPager.getCurrentItem() == 1 && phrasesFragment.isVisible()) {
-            getSupportFragmentManager().popBackStack();
+        if (mViewPager.getCurrentItem() == 1 && (phrasesFragment.isVisible() || searchFragment.isVisible())) { //Если мы находимся на 1 вкладке(считать с нуля) и phrasesFragment виден
+            getSupportFragmentManager().popBackStack(); //то переходим на фрагмент со стека
         } else {
-            finish();
+            finish(); //закрываем активность
         }
     }
 }
