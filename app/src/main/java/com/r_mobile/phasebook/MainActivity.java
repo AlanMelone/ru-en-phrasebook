@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private OwnPhrasesFragment ownPhrasesFragment;
     private RootFragment rootFragment;
     private SearchFragment searchFragment;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         favoriteFragment.setOnItemClickListener(this);
         categoriesFragment.setOnItemClickListener(this);
         phrasesFragment.setOnItemClickListener(this);
+        searchFragment.setOnItemClickListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -123,13 +126,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+        //Определяем SeachView
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search_action).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.search_action).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
+        //Placeholder для searchView
         searchView.setQueryHint("Введите фразу, перевод иди транскрипцию");
 
+        //Обработчик редактирования и подтверждения запроса в строке поиска
         SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -139,21 +145,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.length() > 0) {
-                    searchFragment.refreshData(newText);
+                    searchFragment.refreshData(newText); //Передаем управление searchView
                 }
-
                 if (newText.length() == 0) {
-                    getSupportFragmentManager().popBackStack();
+                    searchFragment.refreshData(null); //Передаем управление searchView
                 }
                 return false;
             }
         };
 
+        //Обработчик закрытия поиска
+        SearchView.OnCloseListener onCloseListener = new SearchView.OnCloseListener() {
+
+            @Override
+            public boolean onClose() {
+                getSupportFragmentManager().popBackStack();
+                return false;
+            }
+        };
+
+        //Обработчик нажатия на значек поиска
         SearchView.OnClickListener onClickListener = new SearchView.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                mViewPager.setCurrentItem(1);
+                mViewPager.setCurrentItem(1); //Меняем вкладку в приложении
 
                 //Делаем переход на searchFragment
                 android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager(); //Получаем FragmentManager
@@ -166,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         searchView.setOnQueryTextListener(onQueryTextListener);
         searchView.setOnSearchClickListener(onClickListener);
+        searchView.setOnCloseListener(onCloseListener);
 
         return true;
     }
@@ -222,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     favoriteFragment.refresh();
                     phrasesFragment.refresh();
                     ownPhrasesFragment.refresh();
+                    searchFragment.refresh();
                 } else { //Если есть
                     ivFavorite.setImageResource(R.drawable.ic_star_outline); //Устанавливаем изображение
                     phrase.setFavorite(0); //В базе меняем значение избранного на 0
@@ -230,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     favoriteFragment.refresh();
                     phrasesFragment.refresh();
                     ownPhrasesFragment.refresh();
+                    searchFragment.refresh();
                 }
                 break;
         }
@@ -255,6 +274,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         if (mViewPager.getCurrentItem() == 1 && (phrasesFragment.isVisible() || searchFragment.isVisible())) { //Если мы находимся на 1 вкладке(считать с нуля) и phrasesFragment виден
+            if (searchFragment.isVisible()) {
+                searchView.setIconified(true);
+                searchView.onActionViewCollapsed();
+            }
             getSupportFragmentManager().popBackStack(); //то переходим на фрагмент со стека
         } else {
             finish(); //закрываем активность

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ public class SearchFragment extends Fragment {
     RecyclerView recyclerView;
     PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
+    View.OnClickListener onItemClickListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,35 +54,38 @@ public class SearchFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new PhraseAdapter(phraseList);
+        if (onItemClickListener != null) {
+            adapter.setOnItemClickListener(onItemClickListener);
+        }
         recyclerView.setAdapter(adapter);
 
         return rootView;
     }
 
-    public void refreshData(String newText) {
-        String completeText = "%" + newText + "%";
-        phraseList = phraseDao.queryRaw(" inner join " + TranslateDao.TABLENAME + " MCL "
-                + " on T._id = MCL." + TranslateDao.Properties.PhraseId.columnName +
-                " where MCL." + TranslateDao.Properties.Content.columnName
-                + " like '" + completeText + "' or T." + PhraseDao.Properties.Phrase.columnName
-                + " like '" + completeText + "'");
-        //phraseDao.queryRaw("inner join " + TranslateDao.TABLENAME + " N on T." + PhraseDao.Properties.Id.columnName + " = N."+TranslateDao.Properties.PhraseId.columnName +
-        //                " where " + TranslateDao.Properties.Content.columnName + " = " + completeText);
-        //daoSession.getDatabase().rawQuery("SELECT * FROM " + PhraseDao.TABLENAME + " INNER JOIN " + TranslateDao.TABLENAME + " ON " + PhraseDao.TABLENAME + "._id = " + TranslateDao.TABLENAME + "." + TranslateDao.Properties.PhraseId.columnName, null);
-        //phraseDao.queryRaw("SELECT * FROM " + PhraseDao.TABLENAME + " INNER JOIN " + TranslateDao.TABLENAME + " ON " + PhraseDao.TABLENAME + "._id = " + TranslateDao.TABLENAME + "." + TranslateDao.Properties.PhraseId.columnName);
-        /*
-        Query query = phraseDao.queryBuilder().where(
-                new WhereCondition.StringCondition("_id IN " +
-                        "(SELECT PHRASE_ID FROM Translations)")).build();
+    public void setOnItemClickListener(View.OnClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+        if (adapter != null) {
+            adapter.setOnItemClickListener(onItemClickListener);
+        }
+    }
 
-        phraseList = query.list();
-        */
-        /*
-        QueryBuilder queryBuilder = phraseDao.queryBuilder();
-        queryBuilder.join(Phrase.class, PhraseDao.Properties.Id);
-        phraseList = queryBuilder.list();
-        */
-        //phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Phrase.like("%" + newText + "%")).list();
+    public void refresh() {
+        if (recyclerView != null) {
+            recyclerView.setAdapter(adapter);
+        }
+    }
+
+    public void refreshData(String newText) {
+        if (newText != null) {
+            String completeText = "%" + newText + "%";
+            phraseList = phraseDao.queryRaw(" inner join " + TranslateDao.TABLENAME + " MCL "
+                    + " on T._id = MCL." + TranslateDao.Properties.PhraseId.columnName +
+                    " where MCL." + TranslateDao.Properties.Content.columnName
+                    + " like '" + completeText + "' or T." + PhraseDao.Properties.Phrase.columnName
+                    + " like '" + completeText + "'");
+        } else {
+            phraseList = phraseDao.loadAll();
+        }
         adapter.setmDataset(phraseList);
         recyclerView.setAdapter(adapter);
     }

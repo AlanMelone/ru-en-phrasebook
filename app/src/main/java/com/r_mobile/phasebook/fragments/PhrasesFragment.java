@@ -30,14 +30,12 @@ public class PhrasesFragment extends Fragment {
 
     private DaoSession daoSession;
     private PhraseDao phraseDao;
-    private boolean isViewShown = false;
 
     List<Phrase> phraseList;
     RecyclerView recyclerView;
     PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
-    ActionBar actionBar;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_phrases, container, false);
@@ -72,19 +70,4 @@ public class PhrasesFragment extends Fragment {
             recyclerView.setAdapter(adapter);
         }
     }
-
-    /*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        //Log.d("onOptionsItemSelected","yes");
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                actionBar.setDisplayHomeAsUpEnabled(false);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-    */
 }
