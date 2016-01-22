@@ -1,5 +1,6 @@
 package com.r_mobile.phasebook.adapters;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         TextView tvTranscription;
         TextView tvTranslate;
         ImageView ivFavorite;
+        CardView cardView;
         View holdingView;
 
         public DataObjectHolder(View itemView) {
@@ -35,6 +37,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
             tvTranscription = (TextView) itemView.findViewById(R.id.tvTranscription);
             tvTranslate = (TextView) itemView.findViewById(R.id.tvTranslate);
             ivFavorite = (ImageView) itemView.findViewById(R.id.ivFavorite);
+            cardView = (CardView) itemView.findViewById(R.id.cv);
             Log.i("phrasebook", "Adding Listener");
             holdingView = itemView;
         }
@@ -71,6 +74,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         }
 
         holder.ivFavorite.setOnClickListener(myClickListener);
+        holder.cardView.setOnClickListener(myClickListener);
         holder.holdingView.setTag(mDataset.get(position).getId());
     }
 

@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RootFragment rootFragment;
     private SearchFragment searchFragment;
     private SearchView searchView;
+    private Speaker speaker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         CharSequence Titles[] = {"Свои", "Фразы", "Избранное"}; //Название вкладок
         int NumbOfTabs = 3; //Количество вкладок
+
+        speaker = new Speaker(this);
 
         daoSession = ((PhraseBookApp) this.getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
@@ -227,7 +230,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int idNum = (Integer.valueOf(idStr))-1; //Переводим id в int
         Integer phraseFavorite = allPhrases.get(idNum).getFavorite(); //Получаем значение, которое указывает, что элемент в избранном
         Phrase phrase = allPhrases.get(idNum); //Получаем фразу
+        //int idCard = v.getId();
+        //int idPhraseCard = R.id.cv;
         switch (v.getId()) {
+            case R.id.cv:
+                speaker.allow(true);
+                speaker.speak(phrase.getPhrase().toString());
+                break;
             case R.id.ivFavorite: //Обрабатываем нажатие на "Избранное"
                 ImageView ivFavorite = (ImageView) v.findViewById(R.id.ivFavorite); //Получаем изображение избранного
                 //Проверяем, есть ли элемент в "Избранном"
