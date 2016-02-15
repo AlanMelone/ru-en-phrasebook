@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.r_mobile.phasebook.fragments.PhrasesFragment;
 import com.r_mobile.phasebook.fragments.RootFragment;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SearchFragment searchFragment;
     private SearchView searchView;
     private Speaker speaker;
+    private MenuItem settingsItem;
+    private MenuItem talkItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +132,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+        settingsItem = menu.findItem(R.id.settings);
+        talkItem = menu.findItem(R.id.talk);
+
         //Определяем SeachView
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) menu.findItem(R.id.search_action).getActionView();
@@ -139,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         searchView.setQueryHint("Введите фразу, перевод иди транскрипцию");
 
         //Обработчик редактирования и подтверждения запроса в строке поиска
-        SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
+        final SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -157,12 +163,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
+        //Обработчик нажатия на элемент менюшки
+        MenuItem.OnMenuItemClickListener onMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    //Нажатие на кнопку "Сказать"
+                    case R.id.talk:
+                        if (!searchView.getQuery().toString().equals("")) {
+                            speaker.allow(true);
+                            speaker.speak(searchView.getQuery().toString());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Введите фразу в строку поиска", Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    //Нажатие на кнопку "Настройки
+                    /*
+                    case R.id.settings:
+                        break;
+                    */
+                }
+                return false;
+            }
+        };
+
         //Обработчик закрытия поиска
         SearchView.OnCloseListener onCloseListener = new SearchView.OnCloseListener() {
-
             @Override
             public boolean onClose() {
                 getSupportFragmentManager().popBackStack();
+                settingsItem.setVisible(true);
+                talkItem.setVisible(false);
                 return false;
             }
         };
@@ -173,6 +204,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 mViewPager.setCurrentItem(1); //Меняем вкладку в приложении
+                settingsItem.setVisible(false);
+                talkItem.setVisible(true);
 
                 //Делаем переход на searchFragment
                 android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager(); //Получаем FragmentManager
@@ -183,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
+        talkItem.setOnMenuItemClickListener(onMenuItemClickListener);
         searchView.setOnQueryTextListener(onQueryTextListener);
         searchView.setOnSearchClickListener(onClickListener);
         searchView.setOnCloseListener(onCloseListener);
@@ -285,6 +319,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (mViewPager.getCurrentItem() == 1 && (phrasesFragment.isVisible() || searchFragment.isVisible())) { //Если мы находимся на 1 вкладке(считать с нуля) и phrasesFragment виден
             if (searchFragment.isVisible()) {
                 searchView.setIconified(true);
+                settingsItem.setVisible(true);
+                talkItem.setVisible(false);
                 searchView.onActionViewCollapsed();
             }
             getSupportFragmentManager().popBackStack(); //то переходим на фрагмент со стека

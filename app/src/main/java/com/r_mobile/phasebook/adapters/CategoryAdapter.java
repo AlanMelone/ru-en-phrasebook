@@ -18,9 +18,9 @@ import java.util.List;
  * Класс описывающий адаптер для категорий
  */
 public class CategoryAdapter extends BaseAdapter {
-    Context cntx;
+    Context cntx; //Контекст в котором юзается адаптер
     LayoutInflater lInflater;
-    List<Category> categoryList;
+    List<Category> categoryList; //Лист с категориями
 
     public CategoryAdapter (Context context, List<Category> categories) {
         cntx = context;
@@ -43,6 +43,7 @@ public class CategoryAdapter extends BaseAdapter {
         return position;
     }
 
+    //Формируем вьюшку для вывода в листвью
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
