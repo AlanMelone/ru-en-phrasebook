@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -61,7 +62,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        /*
+        AppBarLayout.LayoutParams params =
+                (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+        */
         CharSequence Titles[] = {"Свои", "Фразы", "Избранное"}; //Название вкладок
         int NumbOfTabs = 3; //Количество вкладок
 
@@ -250,9 +256,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        if (favoriteFragment.isAdded()) {
-            favoriteFragment.refresh();
-        }
+        //if (favoriteFragment.isAdded()) {
+        //    favoriteFragment.refresh(v);
+        //}
     }
 
     //Обработчик нажатия на карточку
@@ -279,19 +285,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     phrase.setFavorite(1); //В базе меняем значение избранного на 1
                     phraseDao.update(phrase); //Обновляем сущность
                     //Обновляем фрагменты
-                    favoriteFragment.refresh();
-                    phrasesFragment.refresh();
-                    ownPhrasesFragment.refresh();
-                    searchFragment.refresh();
+                    if (mViewPager.getCurrentItem() == 0) {
+                        favoriteFragment.refresh(v, false);
+                        phrasesFragment.refresh();
+                        searchFragment.refresh();
+                    }
+                    if (mViewPager.getCurrentItem() == 1 && phrasesFragment.isVisible()) {
+                        favoriteFragment.refresh(v, false);
+                        ownPhrasesFragment.refresh();
+                        searchFragment.refresh();
+                    }
+                    if (mViewPager.getCurrentItem() == 1 && searchFragment.isVisible()) {
+                        favoriteFragment.refresh(v, false);
+                        phrasesFragment.refresh();
+                        ownPhrasesFragment.refresh();
+                    }
+                    if (mViewPager.getCurrentItem() == 2) {
+                        phrasesFragment.refresh();
+                        ownPhrasesFragment.refresh();
+                        searchFragment.refresh();
+                    }
+                    //favoriteFragment.refresh();
+                    //phrasesFragment.refresh();
+                    //ownPhrasesFragment.refresh();
+                    //searchFragment.refresh();
                 } else { //Если есть
                     ivFavorite.setImageResource(R.drawable.ic_star_outline); //Устанавливаем изображение
                     phrase.setFavorite(0); //В базе меняем значение избранного на 0
                     phraseDao.update(phrase); //Обновляем сущность
                     //Обновляем фрагменты
-                    favoriteFragment.refresh();
-                    phrasesFragment.refresh();
-                    ownPhrasesFragment.refresh();
-                    searchFragment.refresh();
+                    if (mViewPager.getCurrentItem() == 0) {
+                        favoriteFragment.refresh(v, false);
+                        phrasesFragment.refresh();
+                        searchFragment.refresh();
+                    }
+                    if (mViewPager.getCurrentItem() == 1 && phrasesFragment.isVisible()) {
+                        favoriteFragment.refresh(v, false);
+                        ownPhrasesFragment.refresh();
+                        searchFragment.refresh();
+                    }
+                    if (mViewPager.getCurrentItem() == 1 && searchFragment.isVisible()) {
+                        favoriteFragment.refresh(v, false);
+                        phrasesFragment.refresh();
+                        ownPhrasesFragment.refresh();
+                    }
+                    if (mViewPager.getCurrentItem() == 2) {
+                        favoriteFragment.refresh(v, true);
+                        phrasesFragment.refresh();
+                        ownPhrasesFragment.refresh();
+                        searchFragment.refresh();
+                    }
+                    //favoriteFragment.refresh();
+                    //phrasesFragment.refresh();
+                    //ownPhrasesFragment.refresh();
+                    //searchFragment.refresh();
                 }
                 break;
         }

@@ -64,7 +64,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
         holder.tvPhrase.setText(mDataset.get(position).getPhrase());
-        holder.tvTranscription.setText(mDataset.get(position).getTranslateList().get(0).getTranscription());
+        holder.tvTranscription.setText("[ " + mDataset.get(position).getTranslateList().get(0).getTranscription() + " ]");
         holder.tvTranslate.setText(mDataset.get(position).getTranslateList().get(0).getContent());
 
         if (mDataset.get(position).getFavorite().equals(1)) {

@@ -2,17 +2,12 @@ package com.r_mobile.phasebook.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.r_mobile.phasebook.MainActivity;
 import com.r_mobile.phasebook.R;
 import com.r_mobile.phasebook.adapters.PhraseAdapter;
 import com.r_mobile.phasebook.greenDao.DaoSession;

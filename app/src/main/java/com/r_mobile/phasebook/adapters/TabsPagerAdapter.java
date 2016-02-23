@@ -12,6 +12,7 @@ import com.r_mobile.phasebook.fragments.FavoriteFragment;
 import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
 import com.r_mobile.phasebook.fragments.PhrasesFragment;
 import com.r_mobile.phasebook.fragments.RootFragment;
+import com.r_mobile.phasebook.fragments.SearchFragment;
 
 /**
  * Created by r-mobile on 28.10.2015.
