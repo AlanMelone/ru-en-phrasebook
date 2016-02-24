@@ -41,13 +41,17 @@ public class PhrasesFragment extends Fragment {
 
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_phrases_all);
+
+        adapter = new PhraseAdapter(phraseList);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
+
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new PhraseAdapter(phraseList);
+
         if (onItemClickListener != null) {
             adapter.setOnItemClickListener(onItemClickListener);
         }
+
         recyclerView.setAdapter(adapter);
 
         return rootView;
@@ -65,4 +69,11 @@ public class PhrasesFragment extends Fragment {
             recyclerView.setAdapter(adapter);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        recyclerView.scrollToPosition(0);
+    }
+
 }
