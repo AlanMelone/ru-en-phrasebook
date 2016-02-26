@@ -8,9 +8,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -270,7 +272,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //int idCard = v.getId();
         //int idPhraseCard = R.id.cv;
         switch (v.getId()) {
-            case R.id.cv:
+            case R.id.ivMoreOptions:
+                ImageView ivMoreOptions = (ImageView) v.findViewById(R.id.ivMoreOptions);
+                PopupMenu popupMenu = new PopupMenu(this, ivMoreOptions);
+                popupMenu.inflate(R.menu.menu_card);
+                popupMenu.show();
+                break;
+            case R.id.rlSpeak:
                 speaker.allow(true);
                 speaker.speak(phrase.getPhrase().toString());
                 break;

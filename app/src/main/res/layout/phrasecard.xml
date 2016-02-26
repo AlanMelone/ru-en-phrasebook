@@ -25,7 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/linearLayout8"
-                android:layout_toStartOf="@+id/linearLayout8">
+                android:layout_toStartOf="@+id/linearLayout8"
+                android:id="@+id/rlSpeak">
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -98,12 +99,30 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_alignParentEnd="false"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/linearLayout9"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:id="@+id/ivMoreOptions"
+                    android:src="@drawable/ic_more_vert_black_18dp"
+                    android:contentDescription="@string/deleteEdit" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="bottom|center_vertical|center_horizontal"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:id="@+id/linearLayout8"
                 android:layout_alignParentStart="false"
-                android:layout_centerVertical="true">
+                android:layout_alignBottom="@+id/rlSpeak"
+                android:layout_alignParentBottom="false"
+                android:layout_below="@+id/linearLayout9">
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
