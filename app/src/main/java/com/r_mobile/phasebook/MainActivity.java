@@ -3,6 +3,7 @@ package com.r_mobile.phasebook;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
@@ -11,13 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.r_mobile.phasebook.fragments.PhrasesFragment;
@@ -32,6 +36,7 @@ import com.r_mobile.phasebook.fragments.CategoriesFragment;
 import com.r_mobile.phasebook.fragments.FavoriteFragment;
 import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -146,8 +151,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
+        searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text).setBackgroundResource(R.drawable.abc_textfield_search_default_mtrl_alpha);
+
+        AutoCompleteTextView searchTextView = (AutoCompleteTextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        try {
+            Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
+            mCursorDrawableRes.setAccessible(true);
+            mCursorDrawableRes.set(searchTextView, R.drawable.cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+        } catch (Exception e) {
+        }
+
         //Placeholder для searchView
-        searchView.setQueryHint("Введите фразу, перевод иди транскрипцию");
+        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + getResources().getString(R.string.searchPhraseHint) + "</font>"));
+        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        //final int textViewID = searchView.getContext().getResources().getIdentifier("android:id/search_src_text",null, null);
 
         //Обработчик редактирования и подтверждения запроса в строке поиска
         final SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
@@ -276,6 +294,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ImageView ivMoreOptions = (ImageView) v.findViewById(R.id.ivMoreOptions);
                 PopupMenu popupMenu = new PopupMenu(this, ivMoreOptions);
                 popupMenu.inflate(R.menu.menu_card);
+                PopupMenu.OnMenuItemClickListener onMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.deletePhrase:
+
+                                break;
+                        }
+                        return false;
+                    }
+                };
                 popupMenu.show();
                 break;
             case R.id.rlSpeak:
