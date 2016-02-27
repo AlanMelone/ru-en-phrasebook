@@ -49,7 +49,7 @@ public class Speaker implements TextToSpeech.OnInitListener {
         if(ready && allowed) {
             Bundle bundle = new Bundle();
             bundle.putString("bundleSpeak", TextToSpeech.Engine.KEY_PARAM_STREAM);
-            TTS.speak(text, TextToSpeech.QUEUE_FLUSH, bundle, "texttospeech");
+            TTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
 
