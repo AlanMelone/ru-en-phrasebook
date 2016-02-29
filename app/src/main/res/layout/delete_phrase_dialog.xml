@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="24dp"
+    android:paddingTop="24dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/linearLayout10"
+        android:layout_marginRight="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/DeletePhraseLabel"
+            android:id="@+id/tvDeletePhraseLabel"
+            android:gravity="left"
+            android:textColor="#191919"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout10"
+        android:gravity="left"
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="16dp"
+        android:id="@+id/linearLayout11">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/DeletePhraseBody"
+            android:id="@+id/tvDeletePhraseBody"
+            android:gravity="left"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout11"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:gravity="right">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginRight="8dp"
+            android:id="@+id/llCancelDeletePhrase">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/CancelDeletePhraseButton"
+                android:id="@+id/tvDeletePhrase"
+                android:textColor="#2698f3"
+                android:textSize="14sp"
+                android:paddingLeft="11dp"
+                android:paddingRight="11dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/llDeletePhrase">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/ConfirmDeletePhraseButton"
+                android:id="@+id/tvCancelDeletePhrase"
+                android:textColor="#2698f3"
+                android:textSize="14sp"
+                android:paddingLeft="11dp"
+                android:paddingRight="11dp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

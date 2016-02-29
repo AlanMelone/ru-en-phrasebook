@@ -2,18 +2,18 @@ package com.r_mobile.phasebook.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
-import com.r_mobile.phasebook.adapters.CategoriesFragmentListener;
+import com.r_mobile.phasebook.adapters.CategoriesAdapter;
+import com.r_mobile.phasebook.adapters.SimpleDividerItemDecoration;
 import com.r_mobile.phasebook.greenDao.Category;
 import com.r_mobile.phasebook.greenDao.CategoryDao;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.PhraseBookApp;
-import com.r_mobile.phasebook.adapters.CategoryAdapter;
 import com.r_mobile.phasebook.R;
 
 import java.util.List;
@@ -26,14 +26,11 @@ public class CategoriesFragment extends Fragment {
     private DaoSession daoSession;
     private CategoryDao categoryDao;
 
-    CategoryAdapter cAdapter; //Адаптер категорий
+    CategoriesAdapter cAdapter; //Адаптер категорий
     List<Category> categoryList; //Лист с категориями
-    AdapterView.OnItemClickListener onItemClickListener; //Добавляем слушатееля на клик по полю листа
-
-    public static CategoriesFragment newInstance(CategoriesFragmentListener categoriesFragmentListener) {
-        CategoriesFragment categoriesFragment = new CategoriesFragment();
-        return categoriesFragment;
-    }
+    RecyclerView rvCategories;
+    RecyclerView.LayoutManager layoutManager;
+    View.OnClickListener onItemClickListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,19 +40,29 @@ public class CategoriesFragment extends Fragment {
         categoryDao = daoSession.getCategoryDao();
         categoryList = categoryDao.loadAll(); //Заполняем лист категориями
 
-        cAdapter = new CategoryAdapter(getContext(), categoryList); //Определяем адаптер
+        cAdapter = new CategoriesAdapter(categoryList);
 
-        ListView lvCategories = (ListView)rootView.findViewById(R.id.lvCategories);
+        rvCategories = (RecyclerView) rootView.findViewById(R.id.rvCategories);
 
-        lvCategories.setAdapter(cAdapter); //Присваиваем адаптер листвюшке
-        //Определяем нажатие на элемент листвью
-        lvCategories.setOnItemClickListener(onItemClickListener);
+        rvCategories.setHasFixedSize(true);
+        rvCategories.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
+        layoutManager = new LinearLayoutManager(getContext());
+        rvCategories.setLayoutManager(layoutManager);
+
+        if (onItemClickListener != null) {
+            cAdapter.setOnItemClickListener(onItemClickListener);
+        }
+
+        rvCategories.setAdapter(cAdapter);
 
         return rootView;
     }
 
-    public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(View.OnClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+        if (cAdapter != null) {
+            cAdapter.setOnItemClickListener(onItemClickListener);
+        }
     }
 }
 

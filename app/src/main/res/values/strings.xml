@@ -26,4 +26,8 @@
     <string name="deleteEdit">Редактировать/Удалить</string>
     <string name="editPhrase">Редактировать</string>
     <string name="deletePhrase">Удалить</string>
+    <string name="DeletePhraseLabel">Удалить фразу?</string>
+    <string name="DeletePhraseBody">Вы действительно хотите удалить фразу?</string>
+    <string name="CancelDeletePhraseButton">ОТМЕНА</string>
+    <string name="ConfirmDeletePhraseButton">УДАЛИТЬ</string>
 </resources>

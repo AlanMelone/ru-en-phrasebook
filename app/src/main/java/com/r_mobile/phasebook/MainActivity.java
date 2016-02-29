@@ -1,5 +1,6 @@
 package com.r_mobile.phasebook;
 
+import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.r_mobile.phasebook.dialogs.DeleteDialog;
 import com.r_mobile.phasebook.fragments.PhrasesFragment;
 import com.r_mobile.phasebook.fragments.RootFragment;
 import com.r_mobile.phasebook.fragments.SearchFragment;
@@ -39,7 +41,7 @@ import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TabsPagerAdapter mAdapter;
     private ViewPager mViewPager;
@@ -282,11 +284,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         Log.d("phrasebook", "asdqwe");
-        Object id = getParentTill(v, R.id.phrasecardRoot).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
-        String idStr = id.toString(); //Переводим id в строку
-        int idNum = (Integer.valueOf(idStr))-1; //Переводим id в int
-        Integer phraseFavorite = allPhrases.get(idNum).getFavorite(); //Получаем значение, которое указывает, что элемент в избранном
-        Phrase phrase = allPhrases.get(idNum); //Получаем фразу
+        Phrase phrase = getPhraseId(v);
+        Integer phraseFavorite = getPhraseFavorive(v);
         //int idCard = v.getId();
         //int idPhraseCard = R.id.cv;
         switch (v.getId()) {
@@ -299,12 +298,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.deletePhrase:
-
+                                DeleteDialog dialogFragment = new DeleteDialog();
+                                dialogFragment.show(getFragmentManager(), "dialogFragment");
                                 break;
                         }
                         return false;
                     }
                 };
+                popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
                 popupMenu.show();
                 break;
             case R.id.rlSpeak:
@@ -375,9 +376,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //searchFragment.refresh();
                 }
                 break;
+            case R.id.categoryCard:
+                Object id = v.getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
+                String idStr = id.toString(); //Переводим id в строку
+                int idNum = (Integer.valueOf(idStr))-1; //Переводим id в int
+                Bundle bundle = new Bundle();
+                bundle.putInt("categoryID", idNum+1);
+                phrasesFragment.setArguments(bundle);
+
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction tx = fragmentManager.beginTransaction();
+                tx.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                tx.replace(R.id.root_frame, phrasesFragment).addToBackStack(null);
+                tx.commit();
+                break;
         }
     }
 
+    /*
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //Передаем фрагменты phraseFragment значение id категории
@@ -393,6 +409,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tx.replace(R.id.root_frame, phrasesFragment).addToBackStack(null);
         tx.commit();
 
+    }
+    */
+
+    private Phrase getPhraseId(View v) {
+        Phrase phrase;
+        if (v.getId() != R.id.categoryCard) {
+            Object id = getParentTill(v, R.id.phrasecardRoot).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
+            String idStr = id.toString(); //Переводим id в строку
+            int idNum = (Integer.valueOf(idStr))-1; //Переводим id в int
+            phrase = allPhrases.get(idNum); //Получаем фразу
+        } else {
+           phrase = null;
+        }
+        return phrase;
+    }
+
+    private Integer getPhraseFavorive(View v) {
+        Integer phraseFavorite;
+        if (v.getId() != R.id.categoryCard) {
+            Object id = getParentTill(v, R.id.phrasecardRoot).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
+            String idStr = id.toString(); //Переводим id в строку
+            int idNum = (Integer.valueOf(idStr))-1; //Переводим id в int
+            phraseFavorite = allPhrases.get(idNum).getFavorite(); //Получаем значение, которое указывает, что элемент в избранном
+        } else {
+            phraseFavorite = null;
+        }
+        return phraseFavorite;
     }
 
     @Override
