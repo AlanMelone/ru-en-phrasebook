@@ -73,9 +73,6 @@ public class FavoriteFragment extends Fragment {
         } else {
             phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).orderAsc(PhraseDao.Properties.Phrase).list();
             adapter.setmDataset(phraseList);
-            if (recyclerView != null) {
-                recyclerView.setAdapter(adapter);
-            }
         }
     }
 

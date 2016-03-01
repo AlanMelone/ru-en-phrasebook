@@ -63,7 +63,6 @@ public class OwnPhrasesFragment extends Fragment {
         if (recyclerView != null) {
             phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Own.eq(1)).list();
             adapter.setmDataset(phraseList);
-            recyclerView.setAdapter(adapter);
         }
     }
 

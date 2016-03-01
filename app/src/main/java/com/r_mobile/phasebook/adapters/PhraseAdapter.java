@@ -102,6 +102,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
 
     public void setmDataset(List<Phrase> mDataset) {
         this.mDataset = mDataset;
+        notifyDataSetChanged();
     }
 
     @Override

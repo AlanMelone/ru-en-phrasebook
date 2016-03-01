@@ -70,7 +70,6 @@ public class PhrasesFragment extends Fragment {
         if (recyclerView !=null) {
             phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
             adapter.setmDataset(phraseList);
-            recyclerView.setAdapter(adapter);
         }
     }
 

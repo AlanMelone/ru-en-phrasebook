@@ -468,7 +468,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             if (mViewPager.getCurrentItem() == 2) {
                 favoriteFragment.refreshForDelete(position);
-                phrasesFragment.refreshForDelete(position);
+                phrasesFragment.refresh();
                 ownPhrasesFragment.refresh();
                 searchFragment.refresh();
             }
