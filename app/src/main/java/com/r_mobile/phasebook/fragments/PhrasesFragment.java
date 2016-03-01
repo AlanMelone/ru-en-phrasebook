@@ -31,13 +31,15 @@ public class PhrasesFragment extends Fragment {
     PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
+    int categoryID;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_phrases, container, false);
-        int categoryID = getArguments().getInt("categoryID");
+        categoryID = getArguments().getInt("categoryID");
 
         daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
+
 
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_phrases_all);
@@ -70,10 +72,25 @@ public class PhrasesFragment extends Fragment {
         }
     }
 
+    public void refreshForDelete(int position) {
+        adapter.deleteItem(position);
+        phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         recyclerView.scrollToPosition(0);
+    }
+
+    private View getParentTill(View target, int parentId) {
+        View parent = (View) target.getParent();
+
+        while(parent.getId() != parentId) {
+            parent = (View) parent.getParent();
+        }
+
+        return parent;
     }
 
 }

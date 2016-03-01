@@ -48,6 +48,7 @@ public class SearchFragment extends Fragment {
         daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
 
+
         phraseList = phraseDao.loadAll();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_search_phrases);
         recyclerView.setHasFixedSize(true);
@@ -88,5 +89,19 @@ public class SearchFragment extends Fragment {
         }
         adapter.setmDataset(phraseList);
         recyclerView.setAdapter(adapter);
+    }
+
+    private View getParentTill(View target, int parentId) {
+        View parent = (View) target.getParent();
+
+        while(parent.getId() != parentId) {
+            parent = (View) parent.getParent();
+        }
+
+        return parent;
+    }
+
+    public void refreshForDelete(int position) {
+        adapter.deleteItem(position);
     }
 }

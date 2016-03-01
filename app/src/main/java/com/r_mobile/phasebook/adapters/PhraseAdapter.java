@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         TextView tvTranslate;
         ImageView ivFavorite;
         ImageView ivMoreOptions;
+        LinearLayout llRootMoreMenu;
         RelativeLayout rlSpeak;
         View holdingView;
 
@@ -40,6 +42,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
             ivFavorite = (ImageView) itemView.findViewById(R.id.ivFavorite);
             ivMoreOptions = (ImageView) itemView.findViewById(R.id.ivMoreOptions);
             rlSpeak = (RelativeLayout) itemView.findViewById(R.id.rlSpeak);
+            llRootMoreMenu = (LinearLayout) itemView.findViewById(R.id.llRootMoreMenu);
             Log.i("phrasebook", "Adding Listener");
             holdingView = itemView;
         }
@@ -77,6 +80,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
 
         holder.ivFavorite.setOnClickListener(myClickListener);
         holder.rlSpeak.setOnClickListener(myClickListener);
+        holder.llRootMoreMenu.setTag(position);
         holder.ivMoreOptions.setOnClickListener(myClickListener);
         holder.holdingView.setTag(mDataset.get(position).getId());
     }
@@ -89,6 +93,11 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
     public void deleteItem(int index) {
         mDataset.remove(index);
         notifyItemRemoved(index);
+    }
+
+    public void editItem(Phrase dataObj, int index) {
+        mDataset.set(index, dataObj);
+        notifyItemChanged(index);
     }
 
     public void setmDataset(List<Phrase> mDataset) {

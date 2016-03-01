@@ -282,10 +282,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Обработчик нажатия на карточку
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         Log.d("phrasebook", "asdqwe");
-        Phrase phrase = getPhraseId(v);
-        Integer phraseFavorite = getPhraseFavorive(v);
+
         //int idCard = v.getId();
         //int idPhraseCard = R.id.cv;
         switch (v.getId()) {
@@ -298,7 +297,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.deletePhrase:
-                                DeleteDialog dialogFragment = new DeleteDialog();
+                                Phrase phraseDelete = getPhraseId(v, R.id.phrasecardRoot);
+
+                                Object position = getParentTill(v, R.id.llRootMoreMenu).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
+                                String positionStr = position.toString(); //Переводим id в строку
+                                int positionNum = (Integer.valueOf(positionStr)); //Переводим id в int
+
+                                long phraseID = phraseDelete.getId();
+
+                                Bundle bundle = new Bundle();
+
+                                bundle.putLong("deletePhraseID", phraseID);
+                                bundle.putInt("positionPhrase", positionNum);
+
+                                DialogFragment dialogFragment = new DeleteDialog();
+                                dialogFragment.setArguments(bundle);
                                 dialogFragment.show(getFragmentManager(), "dialogFragment");
                                 break;
                         }
@@ -309,10 +322,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 popupMenu.show();
                 break;
             case R.id.rlSpeak:
+                Phrase phrase = getPhraseId(v, R.id.phrasecardRoot);
                 speaker.allow(true);
                 speaker.speak(phrase.getPhrase().toString());
                 break;
             case R.id.ivFavorite: //Обрабатываем нажатие на "Избранное"
+                phrase = getPhraseId(v, R.id.phrasecardRoot);
+                Integer phraseFavorite = getPhraseFavorive(v, R.id.phrasecardRoot);
                 ImageView ivFavorite = (ImageView) v.findViewById(R.id.ivFavorite); //Получаем изображение избранного
                 //Проверяем, есть ли элемент в "Избранном"
                 if (phraseFavorite.equals(0)) { //Если нет, то добавляем
@@ -412,30 +428,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     */
 
-    private Phrase getPhraseId(View v) {
+    private Phrase getPhraseId(View v, int rootView) {
         Phrase phrase;
-        if (v.getId() != R.id.categoryCard) {
-            Object id = getParentTill(v, R.id.phrasecardRoot).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
-            String idStr = id.toString(); //Переводим id в строку
-            int idNum = (Integer.valueOf(idStr))-1; //Переводим id в int
-            phrase = allPhrases.get(idNum); //Получаем фразу
-        } else {
-           phrase = null;
-        }
+        Object id = getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
+        String idStr = id.toString(); //Переводим id в строку
+        int idNum = (Integer.valueOf(idStr)); //Переводим id в int
+        phrase = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0); //Получаем фразу
         return phrase;
     }
 
-    private Integer getPhraseFavorive(View v) {
+    private Integer getPhraseFavorive(View v, int rootView) {
         Integer phraseFavorite;
-        if (v.getId() != R.id.categoryCard) {
-            Object id = getParentTill(v, R.id.phrasecardRoot).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
-            String idStr = id.toString(); //Переводим id в строку
-            int idNum = (Integer.valueOf(idStr))-1; //Переводим id в int
-            phraseFavorite = allPhrases.get(idNum).getFavorite(); //Получаем значение, которое указывает, что элемент в избранном
-        } else {
-            phraseFavorite = null;
-        }
+        Object id = getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
+        String idStr = id.toString(); //Переводим id в строку
+        int idNum = (Integer.valueOf(idStr)); //Переводим id в int
+        phraseFavorite = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0).getFavorite(); //Получаем значение, которое указывает, что элемент в избранном
         return phraseFavorite;
+    }
+
+    public void onDeletePhrase(boolean deleteOk, int position) {
+        if(deleteOk) {
+            if (mViewPager.getCurrentItem() == 0) {
+                favoriteFragment.refresh(null, false);
+                phrasesFragment.refresh();
+                searchFragment.refresh();
+                ownPhrasesFragment.refreshForDelete(position);
+            }
+            if (mViewPager.getCurrentItem() == 1 && phrasesFragment.isVisible()) {
+                favoriteFragment.refresh(null, false);
+                ownPhrasesFragment.refresh();
+                searchFragment.refresh();
+                phrasesFragment.refreshForDelete(position);
+            }
+            if (mViewPager.getCurrentItem() == 1 && searchFragment.isVisible()) {
+                favoriteFragment.refresh(null, false);
+                phrasesFragment.refresh();
+                ownPhrasesFragment.refresh();
+                searchFragment.refreshForDelete(position);
+            }
+            if (mViewPager.getCurrentItem() == 2) {
+                favoriteFragment.refreshForDelete(position);
+                phrasesFragment.refreshForDelete(position);
+                ownPhrasesFragment.refresh();
+                searchFragment.refresh();
+            }
+        }
+
     }
 
     @Override
