@@ -68,6 +68,7 @@ public class PhrasesFragment extends Fragment {
 
     public void refresh() {
         if (recyclerView !=null) {
+            adapter.setmDataset(phraseList);
             recyclerView.setAdapter(adapter);
         }
     }
