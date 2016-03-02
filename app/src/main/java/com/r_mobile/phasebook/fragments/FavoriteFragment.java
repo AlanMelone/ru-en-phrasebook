@@ -89,6 +89,7 @@ public class FavoriteFragment extends Fragment {
     public void refreshForDelete(int position) {
         adapter.deleteItem(position);
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).orderAsc(PhraseDao.Properties.Phrase).list();
+        adapter.setmDataset(phraseList);
     }
 
     public int getViewPosition(View v) {

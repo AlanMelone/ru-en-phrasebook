@@ -103,6 +103,7 @@ public class SearchFragment extends Fragment {
 
     public void refreshForDelete(int position) {
         adapter.deleteItem(position);
+        adapter.setmDataset(phraseList);
     }
 
     public int getViewPosition(View v) {
