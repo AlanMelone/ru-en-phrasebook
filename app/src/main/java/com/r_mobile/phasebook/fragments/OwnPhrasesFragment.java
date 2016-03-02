@@ -69,6 +69,7 @@ public class OwnPhrasesFragment extends Fragment {
     public void refreshForDelete(int position) {
         adapter.deleteItem(position);
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Own.eq(1)).list();
+        adapter.setmDataset(phraseList);
     }
 
     private View getParentTill(View target, int parentId) {
