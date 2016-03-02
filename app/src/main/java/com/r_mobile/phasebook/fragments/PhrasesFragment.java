@@ -76,7 +76,6 @@ public class PhrasesFragment extends Fragment {
     public void refreshForDelete(int position) {
         adapter.deleteItem(position);
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
-        adapter.setmDataset(phraseList);
     }
 
     @Override
