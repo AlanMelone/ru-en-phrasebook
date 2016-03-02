@@ -90,4 +90,8 @@ public class FavoriteFragment extends Fragment {
         adapter.deleteItem(position);
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).orderAsc(PhraseDao.Properties.Phrase).list();
     }
+
+    public int getViewPosition(View v) {
+        return recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot));
+    }
 }

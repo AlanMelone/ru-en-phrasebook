@@ -94,4 +94,8 @@ public class PhrasesFragment extends Fragment {
         return parent;
     }
 
+    public int getViewPosition(View v) {
+        return recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot));
+    }
+
 }

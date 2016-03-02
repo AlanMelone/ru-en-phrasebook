@@ -104,4 +104,9 @@ public class SearchFragment extends Fragment {
     public void refreshForDelete(int position) {
         adapter.deleteItem(position);
     }
+
+    public int getViewPosition(View v) {
+        return recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot));
+    }
+
 }

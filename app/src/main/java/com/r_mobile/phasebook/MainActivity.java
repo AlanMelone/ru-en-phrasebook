@@ -299,9 +299,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             case R.id.deletePhrase:
                                 Phrase phraseDelete = getPhraseId(v, R.id.phrasecardRoot);
 
-                                Object position = getParentTill(v, R.id.llRootMoreMenu).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
-                                String positionStr = position.toString(); //Переводим id в строку
-                                int positionNum = (Integer.valueOf(positionStr)); //Переводим id в int
+                                int positionNum = 0;
+
+                                if (mViewPager.getCurrentItem() == 0) {
+                                    positionNum = ownPhrasesFragment.getViewPosition(v);
+                                }
+                                if (mViewPager.getCurrentItem() == 1 && phrasesFragment.isVisible()) {
+                                    positionNum = phrasesFragment.getViewPosition(v);
+                                }
+                                if (mViewPager.getCurrentItem() == 1 && searchFragment.isVisible()) {
+                                    positionNum = searchFragment.getViewPosition(v);
+                                }
+                                if (mViewPager.getCurrentItem() == 2) {
+                                    positionNum = favoriteFragment.getViewPosition(v);
+                                }
 
                                 long phraseID = phraseDelete.getId();
 
