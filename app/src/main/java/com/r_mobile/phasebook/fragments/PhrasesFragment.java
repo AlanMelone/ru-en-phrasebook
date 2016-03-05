@@ -1,15 +1,20 @@
 package com.r_mobile.phasebook.fragments;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.r_mobile.phasebook.R;
 import com.r_mobile.phasebook.adapters.PhraseAdapter;
+import com.r_mobile.phasebook.dialogs.DeleteDialog;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.Phrase;
 import com.r_mobile.phasebook.greenDao.PhraseBookApp;
@@ -21,7 +26,7 @@ import java.util.List;
  * Created by r-mobile on 18.12.2015.
  */
 
-public class PhrasesFragment extends Fragment {
+public class PhrasesFragment extends Fragment implements View.OnClickListener {
 
     private DaoSession daoSession;
     private PhraseDao phraseDao;
@@ -52,6 +57,7 @@ public class PhrasesFragment extends Fragment {
 
         if (onItemClickListener != null) {
             adapter.setOnItemClickListener(onItemClickListener);
+            adapter.setDeleteClickListener(this);
         }
 
         recyclerView.setAdapter(adapter);
@@ -94,8 +100,39 @@ public class PhrasesFragment extends Fragment {
         return parent;
     }
 
-    public int getViewPosition(View v) {
-        return recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot));
+    @Override
+    public void onClick(final View v) {
+        switch (v.getId()) {
+            case R.id.ivMoreOptions:
+                ImageView ivMoreOptions = (ImageView) v.findViewById(R.id.ivMoreOptions);
+                PopupMenu popupMenu = new PopupMenu(getContext(), ivMoreOptions);
+                popupMenu.inflate(R.menu.menu_card);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Bundle bundle = new Bundle();
+
+                        bundle.putLong("deletePhraseID", getPhraseId(v, R.id.phrasecardRoot));
+                        bundle.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+
+                        DialogFragment dialogFragment = new DeleteDialog();
+                        dialogFragment.setArguments(bundle);
+                        dialogFragment.show(getActivity().getFragmentManager(), "dialogFragment");
+                        return false;
+                    }
+                });
+                popupMenu.show();
+                break;
+        }
     }
 
+    private long getPhraseId(View v, int rootView) {
+        Phrase phrase;
+        Object id = getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневй вьюшки phrasecard
+        String idStr = id.toString(); //Переводим id в строку
+        int idNum = (Integer.valueOf(idStr)); //Переводим id в int
+        phrase = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0); //Получаем фразу
+        long phraseId = phrase.getId();
+        return phraseId;
+    }
 }

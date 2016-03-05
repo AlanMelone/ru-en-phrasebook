@@ -34,7 +34,7 @@ public class Copy {
             checkDB.close();
         }
 
-        return checkDB != null ? true : false;
+        return checkDB != null;
     }
 
     public void copyDataBase(Context context) throws IOException {

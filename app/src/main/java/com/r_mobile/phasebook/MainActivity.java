@@ -288,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //int idCard = v.getId();
         //int idPhraseCard = R.id.cv;
         switch (v.getId()) {
+            /*
             case R.id.ivMoreOptions:
                 ImageView ivMoreOptions = (ImageView) v.findViewById(R.id.ivMoreOptions);
                 PopupMenu popupMenu = new PopupMenu(this, ivMoreOptions);
@@ -332,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
                 popupMenu.show();
                 break;
+                */
             case R.id.rlSpeak:
                 Phrase phrase = getPhraseId(v, R.id.phrasecardRoot);
                 speaker.allow(true);

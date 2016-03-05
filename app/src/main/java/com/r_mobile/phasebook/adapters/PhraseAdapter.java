@@ -22,6 +22,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
 
     private List<Phrase> mDataset;
     private View.OnClickListener myClickListener;
+    private View.OnClickListener deleteClickListener;
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder {
 
@@ -50,6 +51,10 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
 
     public void setOnItemClickListener(View.OnClickListener myClickListener) {
         this.myClickListener = myClickListener;
+    }
+
+    public void setDeleteClickListener(View.OnClickListener deleteClickListener) {
+        this.deleteClickListener = deleteClickListener;
     }
 
     public PhraseAdapter(List<Phrase> myDataset) {
@@ -81,7 +86,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.DataObject
         holder.ivFavorite.setOnClickListener(myClickListener);
         holder.rlSpeak.setOnClickListener(myClickListener);
         holder.llRootMoreMenu.setTag(position);
-        holder.ivMoreOptions.setOnClickListener(myClickListener);
+        holder.ivMoreOptions.setOnClickListener(deleteClickListener);
         holder.holdingView.setTag(mDataset.get(position).getId());
     }
 
