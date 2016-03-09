@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.r_mobile.phasebook.dialogs.DeleteDialog;
+import com.r_mobile.phasebook.dialogs.EditDialog;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.Phrase;
 import com.r_mobile.phasebook.greenDao.PhraseBookApp;
@@ -92,6 +93,11 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).orderAsc(PhraseDao.Properties.Phrase).list();
     }
 
+    public void refreshForEdit(Phrase phraseEdit, int position) {
+        adapter.editItem(phraseEdit, position);
+        phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).orderAsc(PhraseDao.Properties.Phrase).list();
+    }
+
     @Override
     public void onClick(final View v) {
         switch (v.getId()) {
@@ -102,14 +108,28 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        Bundle bundle = new Bundle();
+                        switch(item.getItemId()) {
+                            case R.id.deletePhrase:
+                                Bundle bundleDelete = new Bundle();
 
-                        bundle.putLong("deletePhraseID", getPhraseId(v, R.id.phrasecardRoot));
-                        bundle.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+                                bundleDelete.putLong("deletePhraseID", getPhraseId(v, R.id.phrasecardRoot));
+                                bundleDelete.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
 
-                        DialogFragment dialogFragment = new DeleteDialog();
-                        dialogFragment.setArguments(bundle);
-                        dialogFragment.show(getActivity().getFragmentManager(), "dialogFragment");
+                                DialogFragment dialogFragment = new DeleteDialog();
+                                dialogFragment.setArguments(bundleDelete);
+                                dialogFragment.show(getActivity().getFragmentManager(), "dialogFragment");
+                                break;
+                            case R.id.editPhrase:
+                                Bundle bundleEdit = new Bundle();
+
+                                bundleEdit.putLong("editPhraseID", getPhraseId(v, R.id.phrasecardRoot));
+                                bundleEdit.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+
+                                DialogFragment editFragment = new EditDialog();
+                                editFragment.setArguments(bundleEdit);
+                                editFragment.show(getActivity().getFragmentManager(), "editFragment");
+                                break;
+                        }
                         return false;
                     }
                 });

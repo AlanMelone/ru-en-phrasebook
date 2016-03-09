@@ -11,8 +11,10 @@
         android:icon="@drawable/ic_mic_white_24dp"
         android:visible="false"
         app:showAsAction="always|collapseActionView" />
+    <!--
     <item android:id="@+id/settings"
         android:title="Поиск"
         android:icon="@drawable/ic_settings_white_24dp"
         app:showAsAction="always|collapseActionView"/>
+    -->
 </menu>

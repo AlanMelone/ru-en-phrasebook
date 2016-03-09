@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import com.r_mobile.phasebook.R;
 import com.r_mobile.phasebook.adapters.PhraseAdapter;
 import com.r_mobile.phasebook.dialogs.DeleteDialog;
+import com.r_mobile.phasebook.dialogs.EditDialog;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.Phrase;
 import com.r_mobile.phasebook.greenDao.PhraseBookApp;
@@ -45,6 +46,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
+
+    String currentText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,13 +80,19 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     public void refresh() {
-        if (recyclerView != null) {
-            recyclerView.setAdapter(adapter);
+        if (recyclerView !=null) {
+            if (currentText != null) {
+                refreshData(currentText);
+            } else {
+                phraseList = phraseDao.loadAll();
+                adapter.setmDataset(phraseList);
+            }
         }
     }
 
     public void refreshData(String newText) {
         if (newText != null) {
+            currentText = newText;
             String completeText = "%" + newText + "%";
             phraseList = phraseDao.queryRaw(" inner join " + TranslateDao.TABLENAME + " MCL "
                     + " on T._id = MCL." + TranslateDao.Properties.PhraseId.columnName +
@@ -111,6 +120,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         adapter.deleteItem(position);
     }
 
+    public void refreshForEdit(Phrase phraseEdit, int position) {
+        adapter.editItem(phraseEdit, position);
+    }
+
     @Override
     public void onClick(final View v) {
         switch (v.getId()) {
@@ -121,14 +134,28 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        Bundle bundle = new Bundle();
+                        switch(item.getItemId()) {
+                            case R.id.deletePhrase:
+                                Bundle bundleDelete = new Bundle();
 
-                        bundle.putLong("deletePhraseID", getPhraseId(v, R.id.phrasecardRoot));
-                        bundle.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+                                bundleDelete.putLong("deletePhraseID", getPhraseId(v, R.id.phrasecardRoot));
+                                bundleDelete.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
 
-                        DialogFragment dialogFragment = new DeleteDialog();
-                        dialogFragment.setArguments(bundle);
-                        dialogFragment.show(getActivity().getFragmentManager(), "dialogFragment");
+                                DialogFragment dialogFragment = new DeleteDialog();
+                                dialogFragment.setArguments(bundleDelete);
+                                dialogFragment.show(getActivity().getFragmentManager(), "dialogFragment");
+                                break;
+                            case R.id.editPhrase:
+                                Bundle bundleEdit = new Bundle();
+
+                                bundleEdit.putLong("editPhraseID", getPhraseId(v, R.id.phrasecardRoot));
+                                bundleEdit.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+
+                                DialogFragment editFragment = new EditDialog();
+                                editFragment.setArguments(bundleEdit);
+                                editFragment.show(getActivity().getFragmentManager(), "editFragment");
+                                break;
+                        }
                         return false;
                     }
                 });

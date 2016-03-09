@@ -30,4 +30,9 @@
     <string name="DeletePhraseBody">Вы действительно хотите удалить фразу?</string>
     <string name="CancelDeletePhraseButton">ОТМЕНА</string>
     <string name="ConfirmDeletePhraseButton">УДАЛИТЬ</string>
+    <string name="editPhraseHint">Фраза</string>
+    <string name="editTranscriptionHint">Транскрипция</string>
+    <string name="editTranslateHint">Перевод</string>
+    <string name="acceptEditPhrase">Редактировать</string>
+    <string name="cancel">Отмена</string>
 </resources>

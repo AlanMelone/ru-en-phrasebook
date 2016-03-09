@@ -41,6 +41,8 @@ import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import static com.r_mobile.phasebook.R.drawable.abc_textfield_search_default_mtrl_alpha;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TabsPagerAdapter mAdapter;
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        settingsItem = menu.findItem(R.id.settings);
+        //settingsItem = menu.findItem(R.id.settings);
         talkItem = menu.findItem(R.id.talk);
 
         //Определяем SeachView
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
-        searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text).setBackgroundResource(R.drawable.abc_textfield_search_default_mtrl_alpha);
+        searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text).setBackgroundResource(abc_textfield_search_default_mtrl_alpha);
 
         AutoCompleteTextView searchTextView = (AutoCompleteTextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
@@ -217,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onClose() {
                 getSupportFragmentManager().popBackStack();
-                settingsItem.setVisible(true);
+                //settingsItem.setVisible(true);
                 talkItem.setVisible(false);
                 return false;
             }
@@ -229,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 mViewPager.setCurrentItem(1); //Меняем вкладку в приложении
-                settingsItem.setVisible(false);
+                //settingsItem.setVisible(false);
                 talkItem.setVisible(true);
 
                 //Делаем переход на searchFragment
@@ -489,12 +491,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public void onEditPhrase(boolean editOk, int position, Phrase phraseEdit) {
+        if(editOk) {
+            if (mViewPager.getCurrentItem() == 0) {
+                favoriteFragment.refresh(null, false);
+                phrasesFragment.refresh();
+                searchFragment.refresh();
+                ownPhrasesFragment.refreshForEdit(phraseEdit, position);
+            }
+            if (mViewPager.getCurrentItem() == 1 && phrasesFragment.isVisible()) {
+                favoriteFragment.refresh(null, false);
+                ownPhrasesFragment.refresh();
+                searchFragment.refresh();
+                phrasesFragment.refreshForEdit(phraseEdit, position);
+            }
+            if (mViewPager.getCurrentItem() == 1 && searchFragment.isVisible()) {
+                favoriteFragment.refresh(null, false);
+                phrasesFragment.refresh();
+                ownPhrasesFragment.refresh();
+                searchFragment.refreshForEdit(phraseEdit, position);
+            }
+            if (mViewPager.getCurrentItem() == 2) {
+                favoriteFragment.refreshForEdit(phraseEdit, position);
+                phrasesFragment.refresh();
+                ownPhrasesFragment.refresh();
+                searchFragment.refresh();
+            }
+        }
+
+    }
+
     @Override
     public void onBackPressed() {
         if (mViewPager.getCurrentItem() == 1 && (phrasesFragment.isVisible() || searchFragment.isVisible())) { //Если мы находимся на 1 вкладке(считать с нуля) и phrasesFragment виден
             if (searchFragment.isVisible()) {
                 searchView.setIconified(true);
-                settingsItem.setVisible(true);
+                //settingsItem.setVisible(true);
                 talkItem.setVisible(false);
                 searchView.onActionViewCollapsed();
             }
