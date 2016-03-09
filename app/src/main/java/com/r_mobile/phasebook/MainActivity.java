@@ -1,31 +1,25 @@
 package com.r_mobile.phasebook;
 
-import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.r_mobile.phasebook.dialogs.DeleteDialog;
 import com.r_mobile.phasebook.fragments.PhrasesFragment;
 import com.r_mobile.phasebook.fragments.RootFragment;
 import com.r_mobile.phasebook.fragments.SearchFragment;
@@ -39,7 +33,6 @@ import com.r_mobile.phasebook.fragments.FavoriteFragment;
 import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 import static com.r_mobile.phasebook.R.drawable.abc_textfield_search_default_mtrl_alpha;
 
@@ -48,9 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TabsPagerAdapter mAdapter;
     private ViewPager mViewPager;
     private SlidingTabLayout tabs;
-    private List<Phrase> ownPhrases;
-    private List<Phrase> favoritePhrases;
-    private List<Phrase> allPhrases;
     private DaoSession daoSession;
     private PhraseDao phraseDao;
     private FavoriteFragment favoriteFragment;
@@ -61,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SearchFragment searchFragment;
     private SearchView searchView;
     private Speaker speaker;
-    private MenuItem settingsItem;
+    //private MenuItem settingsItem;
     private MenuItem talkItem;
 
     @Override
@@ -76,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                 | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
         */
-        CharSequence Titles[] = {"Свои", "Фразы", "Избранное"}; //Название вкладок
+        CharSequence Titles[] = {"СВОИ", "ФРАЗЫ", "ИЗБРАННОЕ"}; //Название вкладок
         int NumbOfTabs = 3; //Количество вкладок
 
         speaker = new Speaker(this);
@@ -86,10 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-
-        ownPhrases = phraseDao.queryBuilder().where(PhraseDao.Properties.Own.eq(1)).list();
-        favoritePhrases = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).list();
-        allPhrases = phraseDao.loadAll();
 
         //Создаем фрагменты
         categoriesFragment = new CategoriesFragment();
@@ -115,12 +101,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mViewPager.setCurrentItem(1);
 
         tabs.setDistributeEvenly(true);
+
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
+
         tabs.setViewPager(mViewPager);
 
         //Присваиваем обработчики
