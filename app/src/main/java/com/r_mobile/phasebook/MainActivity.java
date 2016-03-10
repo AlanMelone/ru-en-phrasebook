@@ -77,11 +77,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
 
-        //Создаем фрагменты
+        // Создаем фрагменты
         categoriesFragment = new CategoriesFragment();
         ownPhrasesFragment = new OwnPhrasesFragment();
         favoriteFragment = new FavoriteFragment();
-        categoriesFragment = new CategoriesFragment();
         phrasesFragment = new PhrasesFragment();
         rootFragment = new RootFragment();
         searchFragment = new SearchFragment();
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
             mCursorDrawableRes.set(searchTextView, R.drawable.cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         //Placeholder для searchView
@@ -359,10 +358,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         ownPhrasesFragment.refresh();
                         searchFragment.refresh();
                     }
-                    //favoriteFragment.refresh();
-                    //phrasesFragment.refresh();
-                    //ownPhrasesFragment.refresh();
-                    //searchFragment.refresh();
                 } else { //Если есть
                     ivFavorite.setImageResource(R.drawable.ic_star_outline); //Устанавливаем изображение
                     phrase.setFavorite(0); //В базе меняем значение избранного на 0
