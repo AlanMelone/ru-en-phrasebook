@@ -1,6 +1,5 @@
 package com.r_mobile.phasebook;
 
-import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -11,8 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Created by nemol on 11.11.2015.
+ * Created by AlanMelone on 11.11.2015.
  */
+
 public class Copy {
 
 

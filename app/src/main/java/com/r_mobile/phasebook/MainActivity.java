@@ -38,19 +38,26 @@ import static com.r_mobile.phasebook.R.drawable.abc_textfield_search_default_mtr
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private TabsPagerAdapter mAdapter;
-    private ViewPager mViewPager;
-    private SlidingTabLayout mSlidingTabLayout;
     private DaoSession daoSession;
     private PhraseDao phraseDao;
+
+    private TabsPagerAdapter mAdapter;
+
+    private ViewPager mViewPager;
+
+    private SlidingTabLayout mSlidingTabLayout;
+
     private FavoriteFragment favoriteFragment;
     private CategoriesFragment categoriesFragment;
     private PhrasesFragment phrasesFragment;
     private OwnPhrasesFragment ownPhrasesFragment;
     private RootFragment rootFragment;
+
     private SearchFragment searchFragment;
     private SearchView searchView;
+
     private Speaker speaker;
+
     //private MenuItem settingsItem;
     private MenuItem talkItem;
 
@@ -118,17 +125,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+        // Define menu items
         //settingsItem = menu.findItem(R.id.settings);
         talkItem = menu.findItem(R.id.talk);
 
-        //Определяем SeachView
-        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        // Define SearchView
         searchView = (SearchView) menu.findItem(R.id.search_action).getActionView();
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
-        searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text).setBackgroundResource(abc_textfield_search_default_mtrl_alpha);
+        // Placeholder for search view
+        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + getResources().getString(R.string.searchPhraseHint) + "</font>"));
 
+        // Set color of cursor in search view
+        searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text).setBackgroundResource(abc_textfield_search_default_mtrl_alpha);
         AutoCompleteTextView searchTextView = (AutoCompleteTextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
@@ -137,85 +149,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception ignored) {
         }
 
-        //Placeholder для searchView
-        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + getResources().getString(R.string.searchPhraseHint) + "</font>"));
-
-        //Обработчик редактирования и подтверждения запроса в строке поиска
-        final SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.length() > 0) {
-                    searchFragment.refreshData(newText); //Передаем управление searchView
-                }
-                if (newText.length() == 0) {
-                    searchFragment.refreshData(null); //Передаем управление searchView
-                }
-                return false;
-            }
-        };
-
-        //Обработчик нажатия на элемент менюшки
-        MenuItem.OnMenuItemClickListener onMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    //Нажатие на кнопку "Сказать"
-                    case R.id.talk:
-                        if (!searchView.getQuery().toString().equals("")) {
-                            speaker.allow(true);
-                            speaker.speak(searchView.getQuery().toString());
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Введите фразу в строку поиска", Toast.LENGTH_LONG).show();
-                        }
-                        break;
-                    //Нажатие на кнопку "Настройки
-                    /*
-                    case R.id.settings:
-                        break;
-                    */
-                }
-                return false;
-            }
-        };
-
-        //Обработчик закрытия поиска
-        SearchView.OnCloseListener onCloseListener = new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                getSupportFragmentManager().popBackStack();
-                //settingsItem.setVisible(true);
-                talkItem.setVisible(false);
-                return false;
-            }
-        };
-
-        //Обработчик нажатия на значек поиска
-        SearchView.OnClickListener onClickListener = new SearchView.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mViewPager.setCurrentItem(1); //Меняем вкладку в приложении
-                //settingsItem.setVisible(false);
-                talkItem.setVisible(true);
-
-                //Делаем переход на searchFragment
-                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager(); //Получаем FragmentManager
-                //Стартуем транзакцию
-                FragmentTransaction tx = fragmentManager.beginTransaction();
-                tx.replace(R.id.root_frame, searchFragment).addToBackStack(null);
-                tx.commit();
-            }
-        };
-
-        talkItem.setOnMenuItemClickListener(onMenuItemClickListener);
-        searchView.setOnQueryTextListener(onQueryTextListener);
-        searchView.setOnSearchClickListener(onClickListener);
-        searchView.setOnCloseListener(onCloseListener);
+        // Set listeners for search view and listener for menu item
+        setSearchListeners();
 
         return true;
     }
@@ -231,9 +166,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return super.onOptionsItemSelected(item);
     }
-
-    //Метод возвращает родителя конкретного вью-элемента
-
 
     @Override
     protected void onResume() {
@@ -332,24 +264,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /*
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //Передаем фрагменты phraseFragment значение id категории
-        Bundle bundle = new Bundle();
-        bundle.putInt("categoryID", position + 1);
-        phrasesFragment.setArguments(bundle);
-
-        //Делаем переход на phraseFragment
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager(); //Получаем FragmentManager
-        //Стартуем транзакцию
-        FragmentTransaction tx = fragmentManager.beginTransaction();
-        tx.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        tx.replace(R.id.root_frame, phrasesFragment).addToBackStack(null);
-        tx.commit();
-
-    }
-    */
 
     private Phrase getPhraseId(View v, int rootView) {
         Phrase phrase;
@@ -444,6 +358,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // Create all fragments for work
     private void createFragments() {
         categoriesFragment = new CategoriesFragment();
         ownPhrasesFragment = new OwnPhrasesFragment();
@@ -453,6 +368,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         searchFragment = new SearchFragment();
     }
 
+    // Send fragments for adapter
     private void setAdapterFragments(TabsPagerAdapter tabsPagerAdapter) {
         tabsPagerAdapter.setPhrasesFragment(phrasesFragment);
         tabsPagerAdapter.setCategoriesFragment(categoriesFragment);
@@ -461,11 +377,103 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tabsPagerAdapter.setRootFragment(rootFragment);
     }
 
+    // set listeners for adapter
     private void setListenersForAdapters() {
         ownPhrasesFragment.setOnItemClickListener(this);
         favoriteFragment.setOnItemClickListener(this);
         categoriesFragment.setOnItemClickListener(this);
         phrasesFragment.setOnItemClickListener(this);
         searchFragment.setOnItemClickListener(this);
+    }
+
+    // Listener for edit text in search view
+    private SearchView.OnQueryTextListener changeSearchRefreshListener() {
+        SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.length() > 0) {
+                    searchFragment.refreshData(newText); //Передаем управление searchView
+                }
+                if (newText.length() == 0) {
+                    searchFragment.refreshData(null); //Передаем управление searchView
+                }
+                return false;
+            }
+        };
+        return onQueryTextListener;
+    }
+
+    // Listener for menu item click
+    private MenuItem.OnMenuItemClickListener menuItemClickListener() {
+        MenuItem.OnMenuItemClickListener onMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    //Нажатие на кнопку "Сказать"
+                    case R.id.talk:
+                        if (!searchView.getQuery().toString().equals("")) {
+                            speaker.allow(true);
+                            speaker.speak(searchView.getQuery().toString());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Введите фразу в строку поиска", Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    //Нажатие на кнопку "Настройки
+                    /*
+                    case R.id.settings:
+                        break;
+                    */
+                }
+                return false;
+            }
+        };
+        return onMenuItemClickListener;
+    }
+
+    private SearchView.OnCloseListener closeSearchListener() {
+        SearchView.OnCloseListener onCloseListener = new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                getSupportFragmentManager().popBackStack();
+                //settingsItem.setVisible(true);
+                talkItem.setVisible(false);
+                return false;
+            }
+        };
+        return onCloseListener;
+    }
+
+    // Close search view listener
+    private SearchView.OnClickListener searchClickListener() {
+        SearchView.OnClickListener onClickListener = new SearchView.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(1); //Меняем вкладку в приложении
+                //settingsItem.setVisible(false);
+                talkItem.setVisible(true);
+
+                //Делаем переход на searchFragment
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager(); //Получаем FragmentManager
+                //Стартуем транзакцию
+                FragmentTransaction tx = fragmentManager.beginTransaction();
+                tx.replace(R.id.root_frame, searchFragment).addToBackStack(null);
+                tx.commit();
+            }
+        };
+        return onClickListener;
+    }
+
+    // Set listeners for search view work
+    private void setSearchListeners() {
+        talkItem.setOnMenuItemClickListener(menuItemClickListener());
+        searchView.setOnQueryTextListener(changeSearchRefreshListener());
+        searchView.setOnSearchClickListener(searchClickListener());
+        searchView.setOnCloseListener(closeSearchListener());
     }
 }
