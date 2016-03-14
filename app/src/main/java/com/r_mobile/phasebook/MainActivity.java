@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private TabsPagerAdapter mAdapter;
     private ViewPager mViewPager;
-    private SlidingTabLayout tabs;
+    private SlidingTabLayout mSlidingTabLayout;
     private DaoSession daoSession;
     private PhraseDao phraseDao;
     private FavoriteFragment favoriteFragment;
@@ -60,63 +60,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*
-        AppBarLayout.LayoutParams params =
-                (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-        */
-        CharSequence Titles[] = {"СВОИ", "ФРАЗЫ", "ИЗБРАННОЕ"}; //Название вкладок
-        int NumbOfTabs = 3; //Количество вкладок
 
+        // Name and count tabs
+        CharSequence titles[] = {"СВОИ", "ФРАЗЫ", "ИЗБРАННОЕ"}; // Name of tabs
+        int numbOfTabs = 3; // Count tabs
+
+        // Create help text to speech object
         speaker = new Speaker(this);
 
+        // Connection database
         daoSession = ((PhraseBookApp) this.getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
 
+        // Initialization objects
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.tabs);
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), titles, numbOfTabs);
 
-        // Создаем фрагменты
-        categoriesFragment = new CategoriesFragment();
-        ownPhrasesFragment = new OwnPhrasesFragment();
-        favoriteFragment = new FavoriteFragment();
-        phrasesFragment = new PhrasesFragment();
-        rootFragment = new RootFragment();
-        searchFragment = new SearchFragment();
+        // Create all fragments for work
+        createFragments();
+
+        // Assign adapters listener
+        setListenersForAdapters();
+
+        // Assign for root categories fragment
         rootFragment.setCategoriesFragment(categoriesFragment);
 
-        //Создаем адаптр
-        mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), Titles, NumbOfTabs);
+        // Assign fragments in adapter
+        setAdapterFragments(mAdapter);
 
-        //Передаем адаптеру все ссылки на фрагменты
-        mAdapter.setPhrasesFragment(phrasesFragment);
-        mAdapter.setCategoriesFragment(categoriesFragment);
-        mAdapter.setFavoriteFragment(favoriteFragment);
-        mAdapter.setOwnPhrasesFragment(ownPhrasesFragment);
-        mAdapter.setRootFragment(rootFragment);
-
+        // Setting view pager
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(1);
 
-        tabs.setDistributeEvenly(true);
-
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        // Setting sliding tab
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
+        mSlidingTabLayout.setViewPager(mViewPager);
 
-        tabs.setViewPager(mViewPager);
-
-        //Присваиваем обработчики
-        ownPhrasesFragment.setOnItemClickListener(this);
-        favoriteFragment.setOnItemClickListener(this);
-        categoriesFragment.setOnItemClickListener(this);
-        phrasesFragment.setOnItemClickListener(this);
-        searchFragment.setOnItemClickListener(this);
-
+        // Create floating action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,8 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(getApplicationContext(), AddPhraseActivity.class));
             }
         });
-
-
     }
 
     @Override
@@ -154,9 +139,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Placeholder для searchView
         searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + getResources().getString(R.string.searchPhraseHint) + "</font>"));
-        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        //final int textViewID = searchView.getContext().getResources().getIdentifier("android:id/search_src_text",null, null);
 
         //Обработчик редактирования и подтверждения запроса в строке поиска
         final SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
@@ -251,22 +233,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //Метод возвращает родителя конкретного вью-элемента
-    private View getParentTill(View target, int parentId) {
-        View parent = (View) target.getParent();
 
-        while(parent.getId() != parentId) {
-            parent = (View) parent.getParent();
-        }
-
-        return parent;
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //if (favoriteFragment.isAdded()) {
-        //    favoriteFragment.refresh(v);
-        //}
     }
 
     //Обработчик нажатия на карточку
@@ -277,52 +248,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //int idCard = v.getId();
         //int idPhraseCard = R.id.cv;
         switch (v.getId()) {
-            /*
-            case R.id.ivMoreOptions:
-                ImageView ivMoreOptions = (ImageView) v.findViewById(R.id.ivMoreOptions);
-                PopupMenu popupMenu = new PopupMenu(this, ivMoreOptions);
-                popupMenu.inflate(R.menu.menu_card);
-                PopupMenu.OnMenuItemClickListener onMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.deletePhrase:
-                                Phrase phraseDelete = getPhraseId(v, R.id.phrasecardRoot);
-
-                                int positionNum = 0;
-
-                                if (mViewPager.getCurrentItem() == 0) {
-                                    positionNum = ownPhrasesFragment.getViewPosition(v);
-                                }
-                                if (mViewPager.getCurrentItem() == 1 && phrasesFragment.isVisible()) {
-                                    positionNum = phrasesFragment.getViewPosition(v);
-                                }
-                                if (mViewPager.getCurrentItem() == 1 && searchFragment.isVisible()) {
-                                    positionNum = searchFragment.getViewPosition(v);
-                                }
-                                if (mViewPager.getCurrentItem() == 2) {
-                                    positionNum = favoriteFragment.getViewPosition(v);
-                                }
-
-                                long phraseID = phraseDelete.getId();
-
-                                Bundle bundle = new Bundle();
-
-                                bundle.putLong("deletePhraseID", phraseID);
-                                bundle.putInt("positionPhrase", positionNum);
-
-                                DialogFragment dialogFragment = new DeleteDialog();
-                                dialogFragment.setArguments(bundle);
-                                dialogFragment.show(getFragmentManager(), "dialogFragment");
-                                break;
-                        }
-                        return false;
-                    }
-                };
-                popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
-                popupMenu.show();
-                break;
-                */
             case R.id.rlSpeak:
                 Phrase phrase = getPhraseId(v, R.id.phrasecardRoot);
                 speaker.allow(true);
@@ -428,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Phrase getPhraseId(View v, int rootView) {
         Phrase phrase;
-        Object id = getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
+        Object id = Utils.getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
         String idStr = id.toString(); //Переводим id в строку
         int idNum = (Integer.valueOf(idStr)); //Переводим id в int
         phrase = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0); //Получаем фразу
@@ -437,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Integer getPhraseFavorive(View v, int rootView) {
         Integer phraseFavorite;
-        Object id = getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
+        Object id = Utils.getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневой вьюшки phrasecard
         String idStr = id.toString(); //Переводим id в строку
         int idNum = (Integer.valueOf(idStr)); //Переводим id в int
         phraseFavorite = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0).getFavorite(); //Получаем значение, которое указывает, что элемент в избранном
@@ -517,5 +442,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             finish(); //закрываем активность
         }
+    }
+
+    private void createFragments() {
+        categoriesFragment = new CategoriesFragment();
+        ownPhrasesFragment = new OwnPhrasesFragment();
+        favoriteFragment = new FavoriteFragment();
+        phrasesFragment = new PhrasesFragment();
+        rootFragment = new RootFragment();
+        searchFragment = new SearchFragment();
+    }
+
+    private void setAdapterFragments(TabsPagerAdapter tabsPagerAdapter) {
+        tabsPagerAdapter.setPhrasesFragment(phrasesFragment);
+        tabsPagerAdapter.setCategoriesFragment(categoriesFragment);
+        tabsPagerAdapter.setFavoriteFragment(favoriteFragment);
+        tabsPagerAdapter.setOwnPhrasesFragment(ownPhrasesFragment);
+        tabsPagerAdapter.setRootFragment(rootFragment);
+    }
+
+    private void setListenersForAdapters() {
+        ownPhrasesFragment.setOnItemClickListener(this);
+        favoriteFragment.setOnItemClickListener(this);
+        categoriesFragment.setOnItemClickListener(this);
+        phrasesFragment.setOnItemClickListener(this);
+        searchFragment.setOnItemClickListener(this);
     }
 }

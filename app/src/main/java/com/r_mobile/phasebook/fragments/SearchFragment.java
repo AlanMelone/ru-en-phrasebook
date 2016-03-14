@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.r_mobile.phasebook.R;
+import com.r_mobile.phasebook.Utils;
 import com.r_mobile.phasebook.adapters.PhraseAdapter;
 import com.r_mobile.phasebook.dialogs.DeleteDialog;
 import com.r_mobile.phasebook.dialogs.EditDialog;
@@ -37,6 +38,7 @@ import de.greenrobot.dao.query.WhereCondition;
 /**
  * Created by AlanMalone on 20.01.2016.
  */
+
 public class SearchFragment extends Fragment implements View.OnClickListener {
     private DaoSession daoSession;
     private PhraseDao phraseDao;
@@ -106,16 +108,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         recyclerView.setAdapter(adapter);
     }
 
-    private View getParentTill(View target, int parentId) {
-        View parent = (View) target.getParent();
-
-        while(parent.getId() != parentId) {
-            parent = (View) parent.getParent();
-        }
-
-        return parent;
-    }
-
     public void refreshForDelete(int position) {
         adapter.deleteItem(position);
     }
@@ -139,7 +131,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                                 Bundle bundleDelete = new Bundle();
 
                                 bundleDelete.putLong("deletePhraseID", getPhraseId(v, R.id.phrasecardRoot));
-                                bundleDelete.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+                                bundleDelete.putInt("positionPhrase", recyclerView.getChildLayoutPosition(Utils.getParentTill(v, R.id.phrasecardRoot)));
 
                                 DialogFragment dialogFragment = new DeleteDialog();
                                 dialogFragment.setArguments(bundleDelete);
@@ -149,7 +141,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                                 Bundle bundleEdit = new Bundle();
 
                                 bundleEdit.putLong("editPhraseID", getPhraseId(v, R.id.phrasecardRoot));
-                                bundleEdit.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+                                bundleEdit.putInt("positionPhrase", recyclerView.getChildLayoutPosition(Utils.getParentTill(v, R.id.phrasecardRoot)));
 
                                 DialogFragment editFragment = new EditDialog();
                                 editFragment.setArguments(bundleEdit);
@@ -166,7 +158,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     private long getPhraseId(View v, int rootView) {
         Phrase phrase;
-        Object id = getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневй вьюшки phrasecard
+        Object id = Utils.getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневй вьюшки phrasecard
         String idStr = id.toString(); //Переводим id в строку
         int idNum = (Integer.valueOf(idStr)); //Переводим id в int
         phrase = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0); //Получаем фразу

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.r_mobile.phasebook.Utils;
 import com.r_mobile.phasebook.dialogs.DeleteDialog;
 import com.r_mobile.phasebook.dialogs.EditDialog;
 import com.r_mobile.phasebook.greenDao.DaoSession;
@@ -67,7 +68,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
 
     public void refresh(View v, boolean favorite) {
         if (favorite) {
-            int id = recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot));
+            int id = recyclerView.getChildLayoutPosition(Utils.getParentTill(v, R.id.phrasecardRoot));
             adapter.deleteItem(id);
             if (onItemClickListener != null) {
                 adapter.setOnItemClickListener(onItemClickListener);
@@ -76,16 +77,6 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
             phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Favorite.eq(1)).orderAsc(PhraseDao.Properties.Phrase).list();
             adapter.setmDataset(phraseList);
         }
-    }
-
-    private View getParentTill(View target, int parentId) {
-        View parent = (View) target.getParent();
-
-        while(parent.getId() != parentId) {
-            parent = (View) parent.getParent();
-        }
-
-        return parent;
     }
 
     public void refreshForDelete(int position) {
@@ -113,7 +104,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
                                 Bundle bundleDelete = new Bundle();
 
                                 bundleDelete.putLong("deletePhraseID", getPhraseId(v, R.id.phrasecardRoot));
-                                bundleDelete.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+                                bundleDelete.putInt("positionPhrase", recyclerView.getChildLayoutPosition(Utils.getParentTill(v, R.id.phrasecardRoot)));
 
                                 DialogFragment dialogFragment = new DeleteDialog();
                                 dialogFragment.setArguments(bundleDelete);
@@ -123,7 +114,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
                                 Bundle bundleEdit = new Bundle();
 
                                 bundleEdit.putLong("editPhraseID", getPhraseId(v, R.id.phrasecardRoot));
-                                bundleEdit.putInt("positionPhrase", recyclerView.getChildLayoutPosition(getParentTill(v, R.id.phrasecardRoot)));
+                                bundleEdit.putInt("positionPhrase", recyclerView.getChildLayoutPosition(Utils.getParentTill(v, R.id.phrasecardRoot)));
 
                                 DialogFragment editFragment = new EditDialog();
                                 editFragment.setArguments(bundleEdit);
@@ -140,7 +131,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
 
     private long getPhraseId(View v, int rootView) {
         Phrase phrase;
-        Object id = getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневй вьюшки phrasecard
+        Object id = Utils.getParentTill(v, rootView).getTag(); //Получаем id фразы из tag в корневй вьюшки phrasecard
         String idStr = id.toString(); //Переводим id в строку
         int idNum = (Integer.valueOf(idStr)); //Переводим id в int
         phrase = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0); //Получаем фразу
