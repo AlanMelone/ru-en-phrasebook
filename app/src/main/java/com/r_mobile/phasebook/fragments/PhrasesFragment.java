@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.r_mobile.phasebook.R;
@@ -47,12 +51,16 @@ public class PhrasesFragment extends Fragment implements View.OnClickListener {
     View.OnClickListener onItemClickListener;
     String mCategoryName;
 
+    RelativeLayout rlRootPhrases;
+
     int categoryID;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_phrases, container, false);
 
         categoryID = getArguments().getInt("categoryID");
+
+        rlRootPhrases = (RelativeLayout) rootView.findViewById(R.id.phrases_fragment);
 
         daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
@@ -78,6 +86,10 @@ public class PhrasesFragment extends Fragment implements View.OnClickListener {
 
         getActivity().setTitle(mCategoryName);
 
+        if (phraseList.size() == 0) {
+            createNoPhrasesTV(rlRootPhrases);
+        }
+
         return rootView;
     }
 
@@ -90,14 +102,24 @@ public class PhrasesFragment extends Fragment implements View.OnClickListener {
 
     public void refresh() {
         if (recyclerView !=null) {
+            int lastSize = phraseList.size();
             phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
             adapter.setmDataset(phraseList);
+            if (adapter.getItemCount() == 0) {
+                createNoPhrasesTV(rlRootPhrases);
+            }
+            if (lastSize == 0 && adapter.getItemCount() == 1) {
+                deleteNoPhraseTV(rlRootPhrases);
+            }
         }
     }
 
     public void refreshForDelete(int position) {
         adapter.deleteItem(position);
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
+        if (adapter.getItemCount() == 0) {
+            createNoPhrasesTV(rlRootPhrases);
+        }
     }
 
     public void refreshForEdit(Phrase phraseEdit, int position) {
@@ -159,6 +181,26 @@ public class PhrasesFragment extends Fragment implements View.OnClickListener {
         phrase = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0); //Получаем фразу
         long phraseId = phrase.getId();
         return phraseId;
+    }
+
+    private void createNoPhrasesTV(RelativeLayout relativeLayout) {
+        RelativeLayout.LayoutParams linLayoutParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        LinearLayout linLayout = new LinearLayout(getContext());
+        linLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linLayout.setId(R.id.llNoPhrasesOwnPhrases);
+        linLayout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+        linLayout.setLayoutParams(linLayoutParam);
+        relativeLayout.addView(linLayout);
+        RelativeLayout.LayoutParams lpView = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        TextView noFavoriteTV = new TextView(getContext());
+        noFavoriteTV.setText(R.string.noPhrasesInCategoryHint);
+        noFavoriteTV.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+        noFavoriteTV.setLayoutParams(lpView);
+        linLayout.addView(noFavoriteTV);
+    }
+    private void deleteNoPhraseTV(RelativeLayout relativeLayout) {
+        View llNoPhrasesOwnPhrases = relativeLayout.findViewById(R.id.llNoPhrasesOwnPhrases);
+        ((ViewGroup) llNoPhrasesOwnPhrases.getParent()).removeView(llNoPhrasesOwnPhrases);
     }
 
     public String getmCategoryName() {

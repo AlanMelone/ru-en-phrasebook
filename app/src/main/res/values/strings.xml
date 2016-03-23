@@ -39,4 +39,5 @@
     <string name="searchError">Введите фразу в строку поиска</string>
     <string name="noFavoritePhrasesHint">Ни одна фраза не добавлена в избранное</string>
     <string name="noOwnPhrasesHint">Вы ещё не добавили ни одной фразы</string>
+    <string name="noPhrasesInCategoryHint">Нет фраз в этой категории</string>
 </resources>
