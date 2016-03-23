@@ -6,11 +6,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.r_mobile.phasebook.Utils;
 import com.r_mobile.phasebook.dialogs.DeleteDialog;
@@ -39,12 +46,16 @@ public class OwnPhrasesFragment extends Fragment implements View.OnClickListener
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
 
+    RelativeLayout rlRootOwnPhrases;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_ownphrases, container, false);
 
         daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
+
+        rlRootOwnPhrases = (RelativeLayout) rootView.findViewById(R.id.rlRootOwnPhrases);
 
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Own.eq(1)).list();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_phrases_own);
@@ -57,6 +68,11 @@ public class OwnPhrasesFragment extends Fragment implements View.OnClickListener
             adapter.setDeleteClickListener(this);
         }
         recyclerView.setAdapter(adapter);
+
+        if (phraseList.size() == 0) {
+            createNoPhrasesTV(rlRootOwnPhrases);
+        }
+
         return rootView;
     }
 
@@ -69,14 +85,24 @@ public class OwnPhrasesFragment extends Fragment implements View.OnClickListener
 
     public void refresh() {
         if (recyclerView != null) {
+            int lastSize = phraseList.size();
             phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Own.eq(1)).list();
             adapter.setmDataset(phraseList);
+            if (adapter.getItemCount() == 0) {
+                createNoPhrasesTV(rlRootOwnPhrases);
+            }
+            if (lastSize == 0 && adapter.getItemCount() == 1) {
+                deleteNoPhraseTV(rlRootOwnPhrases);
+            }
         }
     }
 
     public void refreshForDelete(int position) {
         adapter.deleteItem(position);
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.Own.eq(1)).list();
+        if (adapter.getItemCount() == 0) {
+            createNoPhrasesTV(rlRootOwnPhrases);
+        }
     }
 
     public void refreshForEdit(Phrase phraseEdit, int position) {
@@ -132,5 +158,25 @@ public class OwnPhrasesFragment extends Fragment implements View.OnClickListener
         phrase = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0); //Получаем фразу
         long phraseId = phrase.getId();
         return phraseId;
+    }
+
+    private void createNoPhrasesTV(RelativeLayout relativeLayout) {
+        RelativeLayout.LayoutParams linLayoutParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        LinearLayout linLayout = new LinearLayout(getContext());
+        linLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linLayout.setId(R.id.llNoPhrasesOwnPhrases);
+        linLayout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+        linLayout.setLayoutParams(linLayoutParam);
+        relativeLayout.addView(linLayout);
+        RelativeLayout.LayoutParams lpView = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        TextView noFavoriteTV = new TextView(getContext());
+        noFavoriteTV.setText(R.string.noOwnPhrasesHint);
+        noFavoriteTV.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+        noFavoriteTV.setLayoutParams(lpView);
+        linLayout.addView(noFavoriteTV);
+    }
+    private void deleteNoPhraseTV(RelativeLayout relativeLayout) {
+        View llNoPhrasesOwnPhrases = relativeLayout.findViewById(R.id.llNoPhrasesOwnPhrases);
+        ((ViewGroup) llNoPhrasesOwnPhrases.getParent()).removeView(llNoPhrasesOwnPhrases);
     }
 }

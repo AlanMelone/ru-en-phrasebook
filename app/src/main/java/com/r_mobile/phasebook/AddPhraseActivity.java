@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.r_mobile.phasebook.greenDao.Category;
 import com.r_mobile.phasebook.greenDao.CategoryDao;
@@ -73,30 +74,33 @@ public class AddPhraseActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAddPhrase:
-                long categoryID = (long) spinnerCategories.getSelectedView().getTag(); //Получаем ID категории из спинера
+                if (isCorrect()) {
+                    long categoryID = (long) spinnerCategories.getSelectedView().getTag(); //Получаем ID категории из спинера
 
-                //Создаем фразу и заполняем её
-                Phrase phrase = new Phrase();
-                phrase.setCategoryId(categoryID);
-                phrase.setPhrase(etPhrase.getText().toString());
-                phrase.setFavorite(0);
-                phrase.setOwn(1);
+                    //Создаем фразу и заполняем её
+                    Phrase phrase = new Phrase();
+                    phrase.setCategoryId(categoryID);
+                    phrase.setPhrase(etPhrase.getText().toString());
+                    phrase.setFavorite(0);
+                    phrase.setOwn(1);
 
-                daoSession.getPhraseDao().insert(phrase); //И добавляем фразу в таблицу
+                    daoSession.getPhraseDao().insert(phrase); //И добавляем фразу в таблицу
 
-                //Создаем перевод и заполняем его
-                Translate translate = new Translate();
-                translate.setPhraseId(phrase.getId()); //Получаем ID фразы
-                translate.setLanguage("English");
-                translate.setContent(etTranslate.getText().toString());
-                translate.setTranscription(etTranscription.getText().toString());
+                    //Создаем перевод и заполняем его
+                    Translate translate = new Translate();
+                    translate.setPhraseId(phrase.getId()); //Получаем ID фразы
+                    translate.setLanguage("English");
+                    translate.setContent(etTranslate.getText().toString());
+                    translate.setTranscription(etTranscription.getText().toString());
 
-                daoSession.getTranslateDao().insert(translate); //Добавляем перевод в таблицу
+                    daoSession.getTranslateDao().insert(translate); //Добавляем перевод в таблицу
 
-                //Переходим на MainActivity
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                    //Переходим на MainActivity
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
 
+                    break;
+                }
                 break;
         }
     }
@@ -109,5 +113,26 @@ public class AddPhraseActivity extends AppCompatActivity implements View.OnClick
                 NavUtils.navigateUpFromSameTask(this);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isCorrect() {
+        boolean error = false;
+        if (etPhrase.getText().toString().equals("")) {
+            Toast.makeText(this, "Введите фразу", Toast.LENGTH_SHORT).show();
+            error = true;
+        }
+        if (etTranscription.getText().toString().equals("")) {
+            Toast.makeText(this, "Введите транскрипцию", Toast.LENGTH_SHORT).show();
+            error = true;
+        }
+        if (etTranslate.getText().toString().equals("")) {
+            error = true;
+            Toast.makeText(this, "Введите перевод", Toast.LENGTH_SHORT).show();
+        }
+        if (error == true) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

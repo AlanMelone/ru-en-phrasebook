@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import com.r_mobile.phasebook.R;
 import com.r_mobile.phasebook.fragments.CategoriesFragment;
 import com.r_mobile.phasebook.fragments.FavoriteFragment;
 import com.r_mobile.phasebook.fragments.OwnPhrasesFragment;
@@ -30,7 +31,6 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     FavoriteFragment favoriteFragment;
     PhrasesFragment phrasesFragment;
     RootFragment rootFragment;
-    SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
     public TabsPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabs) {
         super(fm);
@@ -46,19 +46,6 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return ownPhrasesFragment; //ownPhrasesFragment
             case 1:
-                /*
-                if (fragmentTemp == null) {
-                    fragmentTemp = categoriesFragment.newInstance(new CategoriesFragmentListener() {
-                        @Override
-                        public void onSwitchToNextFragment() {
-                            fragmentManager.beginTransaction().remove(fragmentTemp).commit();
-                            fragmentTemp = phrasesFragment.newInstance();
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-                return fragmentTemp; //categoriesFragment+phrasesFragment
-                */
                 return rootFragment;
             case 2:
                 return favoriteFragment; //favoriteFragment

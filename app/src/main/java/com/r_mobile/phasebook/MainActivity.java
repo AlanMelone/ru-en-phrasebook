@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -36,7 +37,7 @@ import java.lang.reflect.Field;
 
 import static com.r_mobile.phasebook.R.drawable.abc_textfield_search_default_mtrl_alpha;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, FragmentManager.OnBackStackChangedListener {
 
     private DaoSession daoSession;
     private PhraseDao phraseDao;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Setting view pager
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(1);
+        mViewPager.addOnPageChangeListener(onPageChangeListener());
 
         // Setting sliding tab
         mSlidingTabLayout.setDistributeEvenly(true);
@@ -149,6 +151,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception ignored) {
         }
 
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+        shouldDisplayHomeUp();
+
         // Set listeners for search view and listener for menu item
         setSearchListeners();
 
@@ -183,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.rlSpeak:
                 Phrase phrase = getPhraseId(v, R.id.phrasecardRoot);
                 speaker.allow(true);
-                speaker.speak(phrase.getPhrase().toString());
+                speaker.speak(phrase.getPhrase());
                 break;
             case R.id.ivFavorite: //Обрабатываем нажатие на "Избранное"
                 phrase = getPhraseId(v, R.id.phrasecardRoot);
@@ -420,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             speaker.allow(true);
                             speaker.speak(searchView.getQuery().toString());
                         } else {
-                            Toast.makeText(getApplicationContext(), "Введите фразу в строку поиска", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), R.string.searchError, Toast.LENGTH_LONG).show();
                         }
                         break;
                     //Нажатие на кнопку "Настройки
@@ -475,5 +480,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         searchView.setOnQueryTextListener(changeSearchRefreshListener());
         searchView.setOnSearchClickListener(searchClickListener());
         searchView.setOnCloseListener(closeSearchListener());
+    }
+
+    // Page Selected Listener for change title of app
+    private ViewPager.OnPageChangeListener onPageChangeListener() {
+        return new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0: // if own phrases page
+                        setTitle(getResources().getString(R.string.applicationName)); // change title of application
+                        getSupportActionBar().setDisplayHomeAsUpEnabled(false); // disable back button in action bar
+                        break;
+                    case 1: // if open phrases page or categories page
+                        if (phrasesFragment.isVisible()) { // if open phrases page
+                            setTitle(phrasesFragment.getmCategoryName()); // change title of application on category name
+                            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // enable back button in action bar
+                            break;
+                        }
+                        if (categoriesFragment.isVisible()) { // if open categories page
+                            setTitle(getResources().getString(R.string.applicationName));
+                            getSupportActionBar().setDisplayHomeAsUpEnabled(false); // disable back button in action bar
+                            break;
+                        }
+                        break;
+                    case 2: // if favorite page
+                        setTitle(getResources().getString(R.string.applicationName));
+                        getSupportActionBar().setDisplayHomeAsUpEnabled(false); // disable back button in action bar
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        };
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        shouldDisplayHomeUp();
+    }
+
+    public void shouldDisplayHomeUp(){
+        //Enable Up button only  if there are entries in the back stack
+        boolean canback = getSupportFragmentManager().getBackStackEntryCount()>0;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(canback);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        //This method is called when the up button is pressed. Just the pop back stack.
+        getSupportFragmentManager().popBackStack();
+        return true;
     }
 }

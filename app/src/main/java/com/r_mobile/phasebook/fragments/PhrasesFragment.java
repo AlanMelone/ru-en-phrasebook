@@ -1,22 +1,28 @@
 package com.r_mobile.phasebook.fragments;
 
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.r_mobile.phasebook.R;
 import com.r_mobile.phasebook.Utils;
 import com.r_mobile.phasebook.adapters.PhraseAdapter;
 import com.r_mobile.phasebook.dialogs.DeleteDialog;
 import com.r_mobile.phasebook.dialogs.EditDialog;
+import com.r_mobile.phasebook.greenDao.Category;
+import com.r_mobile.phasebook.greenDao.CategoryDao;
 import com.r_mobile.phasebook.greenDao.DaoSession;
 import com.r_mobile.phasebook.greenDao.Phrase;
 import com.r_mobile.phasebook.greenDao.PhraseBookApp;
@@ -32,24 +38,30 @@ public class PhrasesFragment extends Fragment implements View.OnClickListener {
 
     private DaoSession daoSession;
     private PhraseDao phraseDao;
+    private CategoryDao categoryDao;
 
     List<Phrase> phraseList;
     RecyclerView recyclerView;
     PhraseAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
     View.OnClickListener onItemClickListener;
+    String mCategoryName;
+
     int categoryID;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_phrases, container, false);
+
         categoryID = getArguments().getInt("categoryID");
 
         daoSession = ((PhraseBookApp) getActivity().getApplicationContext()).daoSession;
         phraseDao = daoSession.getPhraseDao();
-
+        categoryDao = daoSession.getCategoryDao();
 
         phraseList = phraseDao.queryBuilder().where(PhraseDao.Properties.CategoryId.eq(categoryID)).list();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_phrases_all);
+
+        mCategoryName = categoryDao.queryBuilder().where(CategoryDao.Properties.Id.eq(categoryID)).list().get(0).getLabel();
 
         adapter = new PhraseAdapter(phraseList);
         recyclerView.setHasFixedSize(true);
@@ -63,6 +75,8 @@ public class PhrasesFragment extends Fragment implements View.OnClickListener {
         }
 
         recyclerView.setAdapter(adapter);
+
+        getActivity().setTitle(mCategoryName);
 
         return rootView;
     }
@@ -145,5 +159,9 @@ public class PhrasesFragment extends Fragment implements View.OnClickListener {
         phrase = phraseDao.queryBuilder().where(PhraseDao.Properties.Id.eq(idNum)).list().get(0); //Получаем фразу
         long phraseId = phrase.getId();
         return phraseId;
+    }
+
+    public String getmCategoryName() {
+        return mCategoryName;
     }
 }

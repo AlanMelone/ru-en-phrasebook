@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.r_mobile.phasebook.adapters.CategoriesAdapter;
 import com.r_mobile.phasebook.adapters.SimpleDividerItemDecoration;
@@ -54,6 +55,8 @@ public class CategoriesFragment extends Fragment {
         }
 
         rvCategories.setAdapter(cAdapter);
+
+        getActivity().setTitle(getActivity().getResources().getString(R.string.applicationName));
 
         return rootView;
     }
