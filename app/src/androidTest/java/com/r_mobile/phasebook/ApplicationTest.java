@@ -37,7 +37,6 @@ public class ApplicationTest extends AbstractDaoTestLongPk<PhraseDao, Phrase> {
         entity.setFavorite(1);
         entity.setPhrase("Фраза не 1 а 2");
         dao.update(entity);
-        String test = dao.load((long) 1).getPhrase();
         assertEquals(1, (int) entity.getFavorite());
         assertEquals("Фраза не 1 а 2", dao.load((long) 1).getPhrase());
     }
