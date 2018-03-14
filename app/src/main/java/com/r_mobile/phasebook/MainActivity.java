@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Speaker speaker;
 
-    //private MenuItem settingsItem;
     private MenuItem talkItem;
 
     @Override

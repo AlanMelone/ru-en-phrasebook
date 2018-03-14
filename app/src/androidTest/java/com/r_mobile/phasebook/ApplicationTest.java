@@ -1,8 +1,5 @@
 package com.r_mobile.phasebook;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
-
 import com.r_mobile.phasebook.greenDao.Phrase;
 import com.r_mobile.phasebook.greenDao.PhraseDao;
 
