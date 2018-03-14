@@ -29,4 +29,6 @@ install:
   - adb shell input keyevent 82 &
   - chmod +x ./gradlew
 
-script: ./gradlew assembleDebug
+script:
+  - ./gradlew assembleDebug
+  - ./gradlew clean
